@@ -2,20 +2,19 @@ import { Request, Response, NextFunction } from "express";
 import { TokenExpiredError } from "jsonwebtoken";
 import { verify, JwtPayload } from "jsonwebtoken";
 import { UnauthorizedError } from "../exceptions";
-import { User } from "@prisma/client";
 import { prismaClient } from "../utils/prisma";
 import {
     extractTokenFromHeaders,
     verifyToken,
     AuthTokenPayload
 } from "../utils/jwt";
+import type { User } from "@prisma/client"; 
 
 // CustomRequest interface to provide JWTs to controllers
 export interface CustomRequest extends Request {
     token?: AuthTokenPayload;
-    user?: User;
+    user?: User; // You can replace 'any' with the actual user type if you have it defined elsewhere
 }
-
 export const checkJwt = async (
     req: Request,
     res: Response,
