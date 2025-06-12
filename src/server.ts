@@ -1,9 +1,13 @@
-import { Router } from "express";
-import type { Request, Response } from "express";
-import authenticationRoutes from "./api/authentication";
+import app from "./app";
+import dotenv from "dotenv";
 
-const router = Router();
 
-router.use("/:version/auth", authenticationRoutes);
+dotenv.config();
+const port = process.env.PORT;
 
-export default router;
+
+
+app.listen(port, async () => {
+    console.log(`App is running at http://localhost:${port}`);
+    
+});

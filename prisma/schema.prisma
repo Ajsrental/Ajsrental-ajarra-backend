@@ -32,3 +32,36 @@ enum UserRole {
   ADMIN
   CLIENT
 }
+
+model Vendor {
+  id               String           @id @default(cuid())
+  businessName     String
+  rcNumber         String
+  nin              String
+  yearsInBusiness  YearsInBusiness
+  businessCategory BusinessCategory
+  phoneNumber      String
+  businessAddress  String
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+enum YearsInBusiness {
+  LESS_THAN_1
+  TWO_TO_FIVE
+  SIX_TO_TEN
+  ELEVEN_TO_TWENTY
+  ABOVE_TWENTY
+}
+
+enum BusinessCategory {
+  DECORATOR
+  CATERER
+  PHOTOGRAPHER
+  BAKER
+  SOUND_ENGINEER
+  EVENT_PLANNER
+  DJ
+  FLORIST
+  OTHER
+}
