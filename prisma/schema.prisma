@@ -36,7 +36,7 @@ enum UserRole {
 model Vendor {
   id               String           @id @default(cuid())
   businessName     String
-  rcNumber         String
+  rcNumber         String           @unique
   nin              String
   yearsInBusiness  YearsInBusiness
   businessCategory BusinessCategory
