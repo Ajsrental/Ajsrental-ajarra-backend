@@ -3,8 +3,16 @@ import { createVendor } from "../../services/database/vendor";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { YearsInBusiness, BusinessCategory } from "@prisma/client";
+import { CustomRequest } from "../../../../middlewares/checkJwt";
 
 export const createVendorHandler = async (req: Request, res: Response, next: NextFunction) => {
+    const customReq = req as CustomRequest;
+    const user = customReq.user;
+
+    if (!user || !user.id) {
+        logger.warn("User ID missing in request.");
+        return next(new InternalServerError("User not found"));
+    }
     try {
         const {
             businessName,
@@ -48,6 +56,7 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             businessCategory,
             phoneNumber,
             businessAddress,
+            userId: user.id
         });
 
         res.status(HttpStatusCode.CREATED).json(vendor);

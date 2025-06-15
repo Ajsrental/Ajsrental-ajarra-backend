@@ -4,8 +4,10 @@ import { checkJwt } from "../../middlewares/checkJwt";
 
 const router = Router({ mergeParams: true });
 
+router.use(checkJwt);
+
 // Optionally protect with checkJwt middleware
-// router.post("/create", checkJwt, createVendorHandler);
+
 router.post("/create", VendorController.createVendorHandler);
 
 export default router;
