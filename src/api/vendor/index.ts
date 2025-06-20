@@ -9,6 +9,6 @@ router.use(checkJwt);
 // Optionally protect with checkJwt middleware
 
 router.post("/create", VendorController.createVendorHandler);
-router.put("/update", VendorController.updateVendorHandler);
+router.patch("/update", VendorController.updateVendorHandler);
 
 export default router;

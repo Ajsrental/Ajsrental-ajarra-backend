@@ -68,8 +68,6 @@ router.post("/sign-up", AuthController.signUp);
  */
 router.post("/login", AuthController.login);
 
-// router.use(checkJwt);
-
 /** Google handlers **/
 router.get('/google', AuthController.initiateGoogleLogin);
 router.get('/google/callback', AuthController.handleGoogleCallback);
@@ -78,11 +76,13 @@ router.get('/google/error', AuthController.googleLoginError);
 router.get('/google/signout', AuthController.googleLogout);
 
 // /** Facebook handlers **/
-// router.get('/facebook', AuthController.initiateFacebookLogin);
-// router.get('/facebook/callback', AuthController.handleFacebookCallback);
-// router.get('/facebook/success', AuthController.facebookLoginSuccess);
-// router.get('/facebook/error', AuthController.facebookLoginError);
-// router.get('/facebook/signout', AuthController.facebookLogout);
+router.get('/facebook', AuthController.initiateFacebookLogin);
+router.get('/facebook/callback', AuthController.handleFacebookCallback);
+router.get('/facebook/success', AuthController.facebookLoginSuccess);
+router.get('/facebook/error', AuthController.facebookLoginError);
+router.get('/facebook/signout', AuthController.facebookLogout);
+router.get('/facebook/privacy-policy', AuthController.privacyPolicyHandler)
+router.get('/facebook/terms-of-use', AuthController.termsOfUseHandler);
 
 
 export default router;
