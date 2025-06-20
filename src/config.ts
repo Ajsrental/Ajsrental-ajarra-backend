@@ -36,25 +36,6 @@ export const caching = {
     ),
 };
 
-export const zippay = {
-    url: process.env.ZIP_URL,
-    secretKey: process.env.ZIP_SK,
-    publicKey: process.env.ZIP_PK,
-    webHookSecret: process.env.ZIP_WEBHOOK_SECRET,
-};
-
-export const exchangeRateMarkupPercentage =
-    process.env.EXCHANGE_RATE_MARKUP_PERCENTAGE;
-export const providus = {
-    baseUrl: process.env.PROVIDUS_BASE_URL,
-    secretKey: process.env.PROVIDUS_SK,
-    publicKey: process.env.PROVIDUS_PK,
-};
-
-export const interswitch = {
-    clientId: process.env.CLIENT_ID,
-    secretKey: process.env.SECRET_KEY
-}
 
 export const redis = {
     host: process.env.REDIS_HOST || '127.0.0.1',
