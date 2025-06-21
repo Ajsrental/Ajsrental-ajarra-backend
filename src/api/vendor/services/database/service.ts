@@ -21,9 +21,10 @@ export const createService = async (
                 serviceCategory: data.serviceCategory,
                 location: data.location,
                 pricingModel: data.pricingModel,
-                priceMin: data.priceMin,
-                priceMax: data.priceMax,
-                priceFixed: data.priceFixed,
+                minPrice: data.minPrice,
+                maxPrice: data.maxPrice,
+                fixedPrice: data.fixedPrice,
+                startingPrice: data.startingPrice,
                 updatedAt: new Date(),
             },
             create: {
@@ -33,9 +34,10 @@ export const createService = async (
                 serviceCategory: data.serviceCategory,
                 location: data.location,
                 pricingModel: data.pricingModel,
-                priceMin: data.priceMin,
-                priceMax: data.priceMax,
-                priceFixed: data.priceFixed,
+                minPrice: data.minPrice,
+                maxPrice: data.maxPrice,
+                fixedPrice: data.fixedPrice,
+                startingPrice: data.startingPrice,
                 vendor: { connect: { id: data.vendorId } }, // <-- connect to vendor
             },
         });
@@ -66,6 +68,11 @@ export const getServicesByVendorId = async (vendorId: string) => {
     }
 };
 
+/**
+ * Retrieves a vendor by userId.
+ * @param userId - The ID of the user whose vendor profile to fetch.
+ * @returns The vendor record or null.
+ */
 export const getVendorByUserId = async (userId: string) => {
     return prismaClient.vendor.findUnique({ where: { userId } });
 };

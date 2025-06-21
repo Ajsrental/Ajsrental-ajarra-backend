@@ -84,9 +84,10 @@ model Service {
   serviceCategory Category
   location        String
   pricingModel    PricingModel
-  priceMin        Int?
-  priceMax        Int?
-  priceFixed      Int?
+  minPrice        Int?
+  maxPrice        Int?
+  fixedPrice      Int?
+  startingPrice   Int?
   vendorId        String
   vendor          Vendor      @relation(fields: [vendorId], references: [id])
   createdAt       DateTime    @default(now())

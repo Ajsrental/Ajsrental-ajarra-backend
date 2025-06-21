@@ -22,9 +22,10 @@ export const createServiceHandler = async (req: Request, res: Response, next: Ne
             serviceCategory,
             location,
             pricingModel,
-            priceMin,
-            priceMax,
-            priceFixed
+            minPrice,
+            maxPrice,
+            fixedPrice,
+            startingPrice
         } = req.body;
 
         // Validate required fields
@@ -50,6 +51,29 @@ export const createServiceHandler = async (req: Request, res: Response, next: Ne
             return next(new BadRequestError("Invalid pricingModel value."));
         }
 
+        // Pricing model checks
+        if (pricingModel === PricingModel.FixedPrice) {
+            if (fixedPrice == null) {
+                logger.warn("fixedPrice is required for FixedPrice pricing model.");
+                return next(new BadRequestError("fixedPrice is required for FixedPrice pricing model."));
+            }
+        } else if (pricingModel === PricingModel.PriceRange) {
+            if (minPrice == null || maxPrice == null) {
+                logger.warn("minPrice and maxPrice are required for PriceRange pricing model.");
+                return next(new BadRequestError("minPrice and maxPrice are required for PriceRange pricing model."));
+            }
+        } else if (pricingModel === PricingModel.StartingFrom) {
+            if (fixedPrice == null) {
+                logger.warn("fixedPrice is required for StartingFrom pricing model.");
+                return next(new BadRequestError("fixedPrice is required for StartingFrom pricing model."));
+            }
+        } else if (pricingModel === PricingModel.CustomQuote) {
+            if (minPrice != null || maxPrice != null || fixedPrice != null || startingPrice != null) {
+                logger.warn("All pricing fields must be null for CustomQuote pricing model.");
+                return next(new BadRequestError("All pricing fields must be null for CustomQuote pricing model."));
+            }
+        }
+
         // Get vendorId from userId
         const vendor = await getVendorByUserId(user.id);
         if (!vendor) {
@@ -64,9 +88,10 @@ export const createServiceHandler = async (req: Request, res: Response, next: Ne
             serviceCategory,
             location,
             pricingModel,
-            priceMin,
-            priceMax,
-            priceFixed,
+            minPrice,
+            maxPrice,
+            fixedPrice,
+            startingPrice,
             vendorId: vendor.id
         });
 
