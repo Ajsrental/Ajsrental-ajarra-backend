@@ -3,17 +3,21 @@ import type { Prisma } from "@prisma/client";
 import { logger } from "../../../../utils/logger";
 
 /**
- * Upserts a service in the database.
- * If a service with the same ID exists, it updates the record.
+ * Upserts a service in the database based on name and vendorId.
+ * If a service with the same name and vendorId exists, it updates the record.
  * Otherwise, it creates a new service.
+ * (Requires a unique constraint on [name, vendorId] in the Service model)
  */
 export const createService = async (
-    data: Omit<Prisma.ServiceCreateInput, "vendor"> & { vendorId: string; id?: string }
+    data: Omit<Prisma.ServiceCreateInput, "vendor"> & { vendorId: string }
 ) => {
     try {
         const service = await prismaClient.service.upsert({
             where: {
-                id: data.id!, // id must be provided for update, otherwise upsert will fail
+                name_vendorId: {
+                    name: data.name,
+                    vendorId: data.vendorId,
+                },
             },
             update: {
                 description: data.description,
@@ -38,7 +42,7 @@ export const createService = async (
                 maxPrice: data.maxPrice,
                 fixedPrice: data.fixedPrice,
                 startingPrice: data.startingPrice,
-                vendor: { connect: { id: data.vendorId } }, // <-- connect to vendor
+                vendor: { connect: { id: data.vendorId } },
             },
         });
         logger.info("Service upserted successfully", { serviceId: service.id });

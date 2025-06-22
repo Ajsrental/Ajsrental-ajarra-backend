@@ -92,6 +92,7 @@ model Service {
   vendor          Vendor      @relation(fields: [vendorId], references: [id])
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
+  @@unique([name, vendorId], name: "name_vendorId")
 }
 
 enum PricingModel {

@@ -89,12 +89,14 @@ export const googleLogout = (req: Request, res: Response) => {
                     return res.status(500).send({ message: 'Failed to destroy session' });
                 } else {
                     logger.info("Session destroyed during Google logout");
-                    return res.render('auth');
+                    // Send a JSON response or redirect instead of rendering a view
+                    return res.status(200).json({ message: "Logged out successfully" });
+                    // Or: return res.redirect('/'); // Redirect to home or login page
                 }
             });
         } else {
             logger.warn("No session found during Google logout");
-            return res.render('auth');
+            return res.status(200).json({ message: "No session found, but logged out" });
         }
     } catch (err: any) {
         logger.error("Failed to sign out user via Google", { error: err?.message || err });

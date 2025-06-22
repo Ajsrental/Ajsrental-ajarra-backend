@@ -1,5 +1,5 @@
+// AUTHENTICATION
 // POST /api/v1/auth/sign-up)
-
 export interface SignUpRequestBody {
   firstName: string;
   middleName?: string;
@@ -33,6 +33,7 @@ export interface LoginSuccessResponse {
   };
 }
 
+// VENDORS
 // POST /api/v1/vendor/create)
 
 export interface CreateVendorRequestBody {
@@ -73,4 +74,78 @@ export interface UpdateVendorRequestBody {
 }
 export interface UpdateVendorSuccessResponse {
   message: string; // e.g., "Vendor updated successfully"
+}
+
+// Services 
+// Post /api/v1/vendor/create-service
+
+export interface CreateServiceRequest {
+  name: string;
+  description: string;
+  images: string[];
+  serviceCategory:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
+  location: string;
+  pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
+  minPrice?: number;
+  maxPrice?: number;
+  fixedPrice?: number;
+  startingPrice?: number;
+}
+
+export interface CreateServiceResponse {
+  id: string;
+  name: string;
+  description: string;
+  images: string[];
+  serviceCategory:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
+  location: string;
+  pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  fixedPrice?: number | null;
+  startingPrice?: number | null;
+  vendorId: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+// Get /api/v1/vendor/get-services
+
+export interface ServiceItem {
+  id: string;
+  name: string;
+  description: string;
+  images: string[];
+  serviceCategory:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
+  location: string;
+  pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  fixedPrice?: number | null;
+  startingPrice?: number | null;
+  vendorId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetServicesResponse {
+  services: ServiceItem[];
 }
