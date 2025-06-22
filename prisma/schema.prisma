@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  firstName   String
+  middleName  String?
+  lastName    String
+  email       String   @unique
+  password    String
+  role        UserRole @default(CLIENT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vendor      Vendor?
+}
+
+enum UserRole {
+  VENDOR
+  ADMIN
+  CLIENT
+}
+
+model Vendor {
+  id               String           @id @default(cuid())
+  businessName     String
+  rcNumber         String           @unique
+  nin              String
+  yearsInBusiness  YearsInBusiness
+  businessCategory BusinessCategory
+  phoneNumber      String
+  businessAddress  String
+  userId           String           @unique // Enforce one-to-one User-Vendor
+  user             User             @relation(fields: [userId], references: [id])
+  services         Service[]        // One-to-many: Vendor -> Services
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+}
+
+enum YearsInBusiness {
+  ZERO_TO_ONE      // 0-1 years
+  TWO_TO_FIVE      // 2-5 years
+  SIX_TO_TEN       // 6-10 years
+  ELEVEN_TO_TWENTY // 11-20 years
+  ABOVE_TWENTY     // 20+ years
+}
+
+enum BusinessCategory {
+  BAKER
+  BARTENDER
+  CATERER
+  DJ
+  ENTERTAINMENT
+  EVENT_DECORATOR
+  EVENT_PLANNER
+  FLORIST
+  HAIR_STYLIST
+  PHOTOGRAPHER
+  MAKEUP_ARTIST
+  MC_HOST
+  PHOTO_BOOTH
+  RENTALS
+  SECURITY
+  SOUND_AND_PA_SYSTEM_PROVIDER
+  SOUVENIRS
+  TRANSPORTATION_AND_LOGISTICS_SERVICE
+  USHERS
+  VIDEOGRAPHER
+  OTHER
+}
+
+model Service {
+  id              String      @id @default(cuid())
+  name            String
+  description     String
+  images          String[]
+  serviceCategory Category
+  location        String
+  pricingModel    PricingModel
+  minPrice        Int?
+  maxPrice        Int?
+  fixedPrice      Int?
+  startingPrice   Int?
+  vendorId        String
+  vendor          Vendor      @relation(fields: [vendorId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  @@unique([name, vendorId], name: "name_vendorId")
+}
+
+enum PricingModel {
+  FixedPrice
+  PriceRange
+  StartingFrom
+  CustomQuote
+}
+
+enum AvailableHours {
+  ByAppointmentOnly
+  OpenForSelectedHours
+  AlwaysAvailable
+}
+
+enum Category {
+  BeautyAndStyling
+  DecorAndLightening
+  EntertainmentAndMedia
+  FoodAndBeverage
+  Logistics
+  PlanningAndCoordination
+}

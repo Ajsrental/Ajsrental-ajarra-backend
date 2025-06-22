@@ -19,7 +19,7 @@ export const generateToken = (
     expiresIn?: string
 ): string => {
     const options: SignOptions = {
-        expiresIn: expiresIn || config.JWT_EXPIRES_IN,
+        expiresIn: (expiresIn || config.JWT_EXPIRES_IN) as SignOptions['expiresIn'],
         notBefore: "0", // Cannot use before now, can be configured to be deferred.
         algorithm: "HS256",
         // audience: config.JWT_AUDIENCE,
