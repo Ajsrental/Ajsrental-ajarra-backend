@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { updateVendorByUserId } from "../../services/database/vendor";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
-import { YearsInBusiness, BusinessCategory } from "@prisma/client";
+import { YearsInBusiness, BusinessCategory, VendorStatus } from "@prisma/client";
 import { CustomRequest } from "../../../../middlewares/checkJwt";
 
 export const updateVendorHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,6 +23,7 @@ export const updateVendorHandler = async (req: Request, res: Response, next: Nex
             businessCategory,
             phoneNumber,
             businessAddress,
+            status
         } = req.body;
 
         // Prepare update data object with only provided fields
@@ -46,7 +47,13 @@ export const updateVendorHandler = async (req: Request, res: Response, next: Nex
         }
         if (phoneNumber !== undefined) updateData.phoneNumber = phoneNumber;
         if (businessAddress !== undefined) updateData.businessAddress = businessAddress;
-
+        if (status !== undefined) {
+            if (!Object.values(VendorStatus).includes(status)) {
+                logger.warn("Invalid status value.");
+                return next(new BadRequestError("Invalid status value."));
+            }
+            updateData.status = status;
+        }
         if (Object.keys(updateData).length === 0) {
             logger.warn("No fields provided for update.");
             return next(new BadRequestError("No fields provided for update."));

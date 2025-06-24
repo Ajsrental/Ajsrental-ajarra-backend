@@ -37,11 +37,18 @@ model Vendor {
   businessCategory BusinessCategory
   phoneNumber      String
   businessAddress  String
+  status           VendorStatus     @default(PENDING)
   userId           String           @unique // Enforce one-to-one User-Vendor
   user             User             @relation(fields: [userId], references: [id])
   services         Service[]        // One-to-many: Vendor -> Services
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+}
+
+enum VendorStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum YearsInBusiness {

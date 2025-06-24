@@ -18,6 +18,7 @@ export const createVendor = async (data: Omit<Prisma.VendorCreateInput, "user"> 
                 businessCategory: data.businessCategory,
                 phoneNumber: data.phoneNumber,
                 businessAddress: data.businessAddress,
+                status: data.status || "PENDING", // Default to PENDING if not provided
                 user: { connect: { id: data.userId } }, // <-- use nested connect
                 updatedAt: new Date(),
             },
@@ -29,6 +30,7 @@ export const createVendor = async (data: Omit<Prisma.VendorCreateInput, "user"> 
                 businessCategory: data.businessCategory,
                 phoneNumber: data.phoneNumber,
                 businessAddress: data.businessAddress,
+                status: data.status || "PENDING",
                 user: { connect: { id: data.userId } }, // <-- use nested connect
             },
         });
