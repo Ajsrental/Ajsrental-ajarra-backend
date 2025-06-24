@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { createVendor } from "../../services/database/vendor";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
-import { YearsInBusiness, BusinessCategory } from "@prisma/client";
+import { YearsInBusiness, BusinessCategory, VendorStatus } from "@prisma/client";
 import { CustomRequest } from "../../../../middlewares/checkJwt";
 
 export const createVendorHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -22,6 +22,7 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             businessCategory,
             phoneNumber,
             businessAddress,
+            status
         } = req.body;
 
         // Validate required fields
@@ -47,6 +48,10 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             logger.warn("Invalid businessCategory value.");
             return next(new BadRequestError("Invalid businessCategory value."));
         }
+        if (status && !Object.values(VendorStatus).includes(status)) {
+            logger.warn("Invalid status value.");
+            return next(new BadRequestError("Invalid status value."));
+        }
 
         const vendor = await createVendor({
             businessName,
@@ -56,6 +61,7 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             businessCategory,
             phoneNumber,
             businessAddress,
+            status: status || VendorStatus.PENDING,
             userId: user.id
         });
 
