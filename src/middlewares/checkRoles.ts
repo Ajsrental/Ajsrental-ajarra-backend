@@ -8,7 +8,7 @@ import type { User } from "@prisma/client";
 export const checkIsAdmin = (req: Request, res: Response, next: NextFunction) => {
     const user = (req as any).user as User | undefined;
     if (!user) {
-        return res.status(401).json({ message: "User is not and Admin" });
+        return res.status(401).json({ message: "User is not an Admin" });
     }
     if (user.role !== "ADMIN") {
         return res.status(403).json({ message: "Forbidden: Admins only" });
