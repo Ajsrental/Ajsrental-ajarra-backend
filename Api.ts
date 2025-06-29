@@ -35,7 +35,6 @@ export interface LoginSuccessResponse {
 
 // VENDORS
 // POST /api/v1/vendor/create)
-
 export interface CreateVendorRequestBody {
   businessName: string;
   rcNumber: string;
@@ -62,7 +61,6 @@ export interface CreateVendorResponse {
 }
 
 // PATCH /api/v1/vendor/update)
-
 export interface UpdateVendorRequestBody {
   businessName?: string;
   rcNumber?: string;
@@ -78,7 +76,6 @@ export interface UpdateVendorSuccessResponse {
 
 // Services 
 // Post /api/v1/vendor/create-service
-
 export interface CreateServiceRequest {
   name: string;
   description: string;
@@ -122,7 +119,6 @@ export interface CreateServiceResponse {
 }
 
 // Get /api/v1/vendor/get-services
-
 export interface ServiceItem {
   id: string;
   name: string;
@@ -148,4 +144,51 @@ export interface ServiceItem {
 
 export interface GetServicesResponse {
   services: ServiceItem[];
+}
+
+// Admin 
+// GET /api/v1/admin/vendors
+export interface Vendor {
+  id: string;
+  businessName: string;
+  rcNumber: string;
+  nin: string;
+  yearsInBusiness: "ZERO_TO_ONE" | "TWO_TO_FIVE" | "SIX_TO_TEN" | "ELEVEN_TO_TWENTY" | "ABOVE_TWENTY";
+  businessCategory: string;
+  phoneNumber: string;
+  businessAddress: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  userId: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+export interface GetAllVendorsResponse {
+  vendors: Vendor[];
+}
+
+// PATCH /api/v1/admin/vendor/status
+export interface UpdateVendorStatusRequest {
+  vendorId: string;
+  status: "APPROVED" | "REJECTED";
+}
+
+export interface Vendor {
+  id: string;
+  businessName: string;
+  rcNumber: string;
+  nin: string;
+  yearsInBusiness: "ZERO_TO_ONE" | "TWO_TO_FIVE" | "SIX_TO_TEN" | "ELEVEN_TO_TWENTY" | "ABOVE_TWENTY";
+  businessCategory: string;
+  phoneNumber: string;
+  businessAddress: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  userId: string;
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+}
+
+export interface UpdateVendorStatusResponse {
+  message: string;
+  vendor: Vendor;
 }
