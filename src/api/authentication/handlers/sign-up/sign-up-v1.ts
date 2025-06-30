@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { UserRole } from "@prisma/client";
 import bcrypt from "bcryptjs";
-import { createUser } from "../../services/database/user";
+import { createUser, findUser } from "../../services/database/user";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { isValidEmail, isValidPhone } from "../../../../utils/validations";
@@ -23,11 +23,12 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             return next(new BadRequestError("Invalid email format."));
         }
 
-        // (Optional) Add phone validation if you include phone numbers later
-        // if (phone && !isValidPhone(phone)) {
-        //     logger.warn("Invalid phone number format.");
-        //     return next(new BadRequestError("Invalid phone number format."));
-        // }
+        // Check if user with this email already exists
+        const existingUser = await findUser({ email });
+        if (existingUser) {
+            logger.warn("Email already exists.");
+            return next(new BadRequestError("A user with this email already exists."));
+         }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
