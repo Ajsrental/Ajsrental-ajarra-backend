@@ -68,6 +68,56 @@ router.post("/sign-up", AuthController.signUp);
  */
 router.post("/login", AuthController.login);
 
+/**
+ * @openapi
+ * /auth/forgot-password:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Request a password reset email
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset email sent
+ */
+router.post("/forgot-password", AuthController.forgotPassword);
+
+/**
+ * @openapi
+ * /auth/reset-password/{token}:
+ *   post:
+ *     tags:
+ *       - Authentication
+ *     summary: Reset password using a reset token
+ *     parameters:
+ *       - in: path
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ */
+router.post("/reset-password/:token", AuthController.resetPassword);
+
 /** Google handlers **/
 router.get('/google', AuthController.initiateGoogleLogin);
 router.get('/google/callback', AuthController.handleGoogleCallback);
@@ -83,6 +133,8 @@ router.get('/facebook/error', AuthController.facebookLoginError);
 router.get('/facebook/signout', AuthController.facebookLogout);
 router.get('/facebook/privacy-policy', AuthController.privacyPolicyHandler)
 router.get('/facebook/terms-of-use', AuthController.termsOfUseHandler);
+
+
 
 
 export default router;

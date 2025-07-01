@@ -1,1 +1,1 @@
-// export * from "./reset-password-v1";
+export * from "./reset-password-v1";

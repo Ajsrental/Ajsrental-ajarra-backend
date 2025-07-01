@@ -1,36 +1,62 @@
-// /**
-//  * Forgot password
-//  */
-// exports.forgotPassword = catchAsync(async (req, res, next) => {
-//     // Get user by email
-//     const user = await User.findOne({ email: req.body.email });
-//     if (!user) {
-//         return next(new AppError('There is no user with that email address', 404));
-//     }
+import { Request, Response, NextFunction } from "express";
+import crypto from "crypto";
+import { createPasswordResetToken } from "../../../../utils/jwt";
+import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
+import { logger } from "../../../../utils/logger";
+import { findUser } from "../../services/database/user";
+import { prismaClient } from "../../../../utils/prisma";
+import * as emailService from "../../../../utils/emailService";
 
-//     // Generate random reset token
-//     const resetToken = user.createPasswordResetToken();
+/**
+ * Handler for forgot password functionality.
+ * - Finds user by email
+ * - Generates a reset token and expiry
+ * - Stores hashed token and expiry in PasswordResetToken table
+ * - Sends reset email to user
+ */
+export const forgotPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { email } = req.body;
 
-//     console.log("Hashed Token________________________________:", resetToken);
-//     await user.save({ validateBeforeSave: false });
+        if (!email) {
+            logger.warn("No email provided for forgot password.");
+            return next(new BadRequestError("Email is required."));
+        }
 
-//     // Create password reset URL
-//     const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+        // Find user by email
+        const user = await findUser({ email });
+        if (!user) {
+            logger.warn(`No user found with email: ${email}`);
+            return next(new BadRequestError("There is no user with that email address."));
+        }
 
-//     try {
-//         // Send password reset email
-//         await emailService.sendPasswordResetEmail(user, resetToken, resetURL);
+        // Generate reset token and expiry
+        const { resetToken, passwordResetExpires } = createPasswordResetToken();
+        const tokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
 
-//         res.status(200).json({
-//             status: 'success',
-//             message: 'Token sent to email'
-//         });
-//     } catch (err) {
-//         // If email sending fails, clear the reset token
-//         user.passwordResetToken = undefined;
-//         user.passwordResetExpires = undefined;
-//         await user.save({ validateBeforeSave: false });
+        // Store hashed token and expiry in PasswordResetToken table
+        await prismaClient.passwordResetToken.create({
+            data: {
+                userId: user.id,
+                tokenHash,
+                expiresAt: new Date(passwordResetExpires),
+            },
+        });
 
-//         return next(new AppError('There was an error sending the email. Try again later!', 500));
-//     }
-// });
+        // Create password reset URL
+        const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+        // Send password reset email
+        await emailService.sendPasswordResetEmail(user, resetToken, resetURL);
+
+        logger.info(`Password reset token sent to email: ${email}`);
+
+        return res.status(HttpStatusCode.OK).json({
+            status: "success",
+            message: "Token sent to email",
+        });
+    } catch (error) {
+        logger.error("Error in forgot password handler:", error);
+        next(new InternalServerError("Internal server error"));
+    }
+};

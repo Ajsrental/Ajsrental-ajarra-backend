@@ -1,5 +1,6 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import { Request } from "express";
+import crypto from "crypto";
 
 const config = {
     JWT_SECRET: process.env.JWT_SECRET,
@@ -57,4 +58,19 @@ export const extractTokenFromHeaders = (req: Request): string | null => {
         return token;
     }
     return null;
+};
+
+/**
+ * Generates a password reset token and expiry timestamp.
+ * Returns an object with the token, its hashed version, and the expiry date.
+ */
+
+export const createPasswordResetToken = () => {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes from now
+
+    return {
+        resetToken,
+        passwordResetExpires
+    };
 };
