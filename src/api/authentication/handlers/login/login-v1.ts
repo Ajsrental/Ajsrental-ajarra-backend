@@ -23,6 +23,12 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
             return next(new UnauthorizedError("Invalid email or password."));
         }
 
+        // Check if email is verified
+        if (!user.emailVerified) {
+            logger.warn(`Login attempt with unverified email: ${email}`);
+            return next(new UnauthorizedError("Please verify your email before logging in."));
+        }
+
         // Check password
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {

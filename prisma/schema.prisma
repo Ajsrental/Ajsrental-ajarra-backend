@@ -13,6 +13,9 @@ model User {
   firstName   String
   middleName  String?
   lastName    String
+  emailVerified                   Boolean                          @default(false)
+  phoneVerified                   Boolean                          @default(false)
+  phone       String?  @unique
   email       String   @unique
   password    String
   role        UserRole @default(CLIENT)
@@ -133,4 +136,25 @@ model PasswordResetToken {
   expiresAt  DateTime
   used       Boolean  @default(false)
   createdAt  DateTime @default(now())
+}
+
+//**Defining the signup request schema to store otp attempt*/
+model SignupRequest {
+  id        String        @id @default(cuid())
+  ipAddress String
+  userId    String        @unique
+  status    String
+  email     String        @unique
+  password  String
+  idType    RequestIDType @default(PHONE)
+  verified  Boolean       @default(false)
+  otp       String? // Field to store the generated OTP code
+  otpExpiry DateTime?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum RequestIDType {
+  PHONE
+  EMAIL
 }
