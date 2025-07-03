@@ -54,6 +54,7 @@ export const forgotPassword = async (req: Request, res: Response, next: NextFunc
         return res.status(HttpStatusCode.OK).json({
             status: "success",
             message: "Token sent to email",
+            token: resetToken
         });
     } catch (error) {
         logger.error("Error in forgot password handler:", error);

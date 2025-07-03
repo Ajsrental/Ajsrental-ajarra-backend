@@ -59,15 +59,12 @@ export const resetPassword = async (req: Request, res: Response, next: NextFunct
             data: { used: true },
         });
 
-        // Generate a new JWT for the user
-        const jwt = generateToken({ id: resetRecord.userId });
 
         logger.info(`Password reset successful for user: ${resetRecord.userId}`);
 
         return res.status(HttpStatusCode.OK).json({
             status: "success",
             message: "Password has been reset successfully.",
-            token: jwt,
         });
     } catch (error) {
         logger.error("Error in reset password handler:", error);

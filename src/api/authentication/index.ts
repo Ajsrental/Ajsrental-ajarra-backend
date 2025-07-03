@@ -42,6 +42,60 @@ router.post("/sign-up", AuthController.signUp);
 
 /**
  * @openapi
+ * /auth/verify-otp:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Verify OTP for user sign-up
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               otp:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP verified successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: Invalid or expired OTP
+ */
+router.post("/verify-otp", AuthController.verifyOtp);
+
+/**
+ * @openapi
+ * /auth/resend-otp:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Resend OTP for user sign-up
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: New OTP sent successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: No OTP request found
+ */
+router.post("/resend-otp", AuthController.resendOtp);
+
+/**
+ * @openapi
  * '/auth/login':
  *  post:
  *     tags:
@@ -118,6 +172,7 @@ router.post("/forgot-password", AuthController.forgotPassword);
  */
 router.post("/reset-password/:token", AuthController.resetPassword);
 
+
 /** Google handlers **/
 router.get('/google', AuthController.initiateGoogleLogin);
 router.get('/google/callback', AuthController.handleGoogleCallback);
@@ -133,7 +188,6 @@ router.get('/facebook/error', AuthController.facebookLoginError);
 router.get('/facebook/signout', AuthController.facebookLogout);
 router.get('/facebook/privacy-policy', AuthController.privacyPolicyHandler)
 router.get('/facebook/terms-of-use', AuthController.termsOfUseHandler);
-
 
 
 
