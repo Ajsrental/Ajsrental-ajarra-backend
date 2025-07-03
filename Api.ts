@@ -1,5 +1,7 @@
 // AUTHENTICATION
-// POST /api/v1/auth/sign-up)
+
+// Sign Up
+// POST /api/v1/auth/sign-up
 export interface SignUpRequestBody {
   firstName: string;
   middleName?: string;
@@ -17,11 +19,53 @@ export interface SignUpSuccessResponse {
   role: "CLIENT" | "VENDOR" | "ADMIN";
   createdAt: string;
   updatedAt: string;
+  message: string;
 }
 
+// Verify OTP
+// POST /api/v1/auth/verify-otp
+export interface VerifyOtpRequestBody {
+  email: string;
+  otp: string;
+}
+export interface VerifyOtpSuccessResponse {
+  status: "ok";
+  message: string;
+}
 
-// POST /api/v1/auth/login)
+// Resend OTP
+// POST /api/v1/auth/resend-otp
+export interface ResendOtpRequestBody {
+  email: string;
+}
+export interface ResendOtpSuccessResponse {
+  status: "ok";
+  message: string;
+}
 
+// Forgot Password
+// POST /api/v1/auth/forgot-password
+export interface ForgotPasswordRequestBody {
+  email: string;
+}
+export interface ForgotPasswordSuccessResponse {
+  status: "success";
+  message: string;
+  token?: string; // Optionally include token for dev/testing
+}
+
+// Reset Password
+// POST /api/v1/auth/reset-password/:token
+export interface ResetPasswordRequestBody {
+  password: string;
+}
+export interface ResetPasswordSuccessResponse {
+  status: "success";
+  message: string;
+}
+
+// Login
+// POST /api/v1/auth/login
 export interface LoginRequestBody {
   email: string;
   password: string;
@@ -31,9 +75,10 @@ export interface LoginSuccessResponse {
   data: {
     token: string;
   };
-}
+} 
 
 // VENDORS
+// Create Vendors
 // POST /api/v1/vendor/create)
 export interface CreateVendorRequestBody {
   businessName: string;
@@ -60,6 +105,7 @@ export interface CreateVendorResponse {
   updatedAt: string; // ISO date string
 }
 
+// Update Vendors
 // PATCH /api/v1/vendor/update)
 export interface UpdateVendorRequestBody {
   businessName?: string;
@@ -75,6 +121,7 @@ export interface UpdateVendorSuccessResponse {
 }
 
 // Services 
+// Create service
 // Post /api/v1/vendor/create-service
 export interface CreateServiceRequest {
   name: string;
@@ -118,6 +165,7 @@ export interface CreateServiceResponse {
   updatedAt: string; // ISO date string
 }
 
+// Get Services
 // Get /api/v1/vendor/get-services
 export interface ServiceItem {
   id: string;
@@ -147,6 +195,7 @@ export interface GetServicesResponse {
 }
 
 // Admin 
+// Get Vendors
 // GET /api/v1/admin/vendors
 export interface Vendor {
   id: string;
@@ -167,6 +216,7 @@ export interface GetAllVendorsResponse {
   vendors: Vendor[];
 }
 
+// Update Vendor Status
 // PATCH /api/v1/admin/vendor/status
 export interface UpdateVendorStatusRequest {
   vendorId: string;

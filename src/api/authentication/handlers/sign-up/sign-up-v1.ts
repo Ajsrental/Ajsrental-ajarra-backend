@@ -91,8 +91,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
         const { password: _, ...userWithoutPassword } = user;
         res.status(HttpStatusCode.CREATED).json({
             ...userWithoutPassword,
-            message: "OTP has been sent to your email. Please check your inbox and verify.",
-            nextStep: "/auth/verify-otp"
+            message: "OTP has been sent to your email. Please check your inbox and verify."
         });
     } catch (error) {
         logger.error("Error during user sign-up:", error);
@@ -159,8 +158,7 @@ export const verifyOtp = async (
 
         return res.status(HttpStatusCode.OK).json({
             status: "ok",
-            message: "OTP verified successfully. Your email is now confirmed.",
-            nextStep: "/auth/login",
+            message: "OTP verified successfully. Your email is now confirmed."
         });
     } catch (error: any) {
         console.error("Error in OTP verification:", error);
