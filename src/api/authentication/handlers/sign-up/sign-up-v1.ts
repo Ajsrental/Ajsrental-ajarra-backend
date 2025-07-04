@@ -28,11 +28,11 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
         }
 
         // Check if user with this email already exists
-        const existingUser = await findUser({ email });
-        if (existingUser) {
-            logger.warn("Email already exists.");
-            return next(new BadRequestError("A user with this email already exists."));
-         }
+        // const existingUser = await findUser({ email });
+        // if (existingUser) {
+        //     logger.warn("Email already exists.");
+        //     return next(new BadRequestError("A user with this email already exists."));
+        //  }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
