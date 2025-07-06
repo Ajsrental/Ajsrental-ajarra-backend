@@ -24,9 +24,9 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
         }
 
         // Check if email is verified
-        if (!user.emailVerified) {
-            logger.warn(`Login attempt with unverified email: ${email}`);
-            return next(new UnauthorizedError("Please verify your email before logging in."));
+        if (!user.emailVerified && !user.phoneVerified) {
+            logger.warn(`Login attempt with unverified Account: ${email}`);
+            return next(new UnauthorizedError("Please verify your account using your email or phone number before logging in."));
         }
 
         // Check password
