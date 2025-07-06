@@ -22,25 +22,44 @@ export interface SignUpSuccessResponse {
   message: string;
 }
 
+// Send OTP
+// POST /api/v1/auth/send-otp
+export interface SendOtpRequestBody {
+  email?: string;
+  phone?: string;
+  country?: string;
+}
+export interface SendOtpSuccessResponse {
+  status: "ok";
+  message?: string;
+  data?: any; // Can be refined based on your OTP provider's response
+}
+
 // Verify OTP
 // POST /api/v1/auth/verify-otp
 export interface VerifyOtpRequestBody {
-  email: string;
+  email?: string;
+  phone?: string;
   otp: string;
+  token?: string; // For phone verification if required
 }
 export interface VerifyOtpSuccessResponse {
   status: "ok";
   message: string;
+  data?: any;
 }
 
 // Resend OTP
 // POST /api/v1/auth/resend-otp
 export interface ResendOtpRequestBody {
-  email: string;
+  email?: string;
+  phone?: string;
+  country?: string;
 }
 export interface ResendOtpSuccessResponse {
   status: "ok";
   message: string;
+  data?: any;
 }
 
 // Forgot Password

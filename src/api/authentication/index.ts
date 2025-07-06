@@ -5,7 +5,6 @@ import { checkJwt } from "../../middlewares/checkJwt";
 const router = Router({ mergeParams: true });
 
 
-
 /**
  * @openapi
  * '/auth/sign-up':
@@ -42,11 +41,11 @@ router.post("/sign-up", AuthController.signUp);
 
 /**
  * @openapi
- * /auth/verify-otp:
+ * /auth/send-otp:
  *   post:
  *     tags:
  *       - Auth
- *     summary: Verify OTP for user sign-up
+ *     summary: Send OTP to email or phone for verification
  *     requestBody:
  *       required: true
  *       content:
@@ -56,7 +55,39 @@ router.post("/sign-up", AuthController.signUp);
  *             properties:
  *               email:
  *                 type: string
+ *               phone:
+ *                 type: string
+ *               country:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: OTP sent successfully
+ *       400:
+ *         description: Bad request
+ */
+router.post("/send-otp", AuthController.sendOTPHandler);
+
+/**
+ * @openapi
+ * /auth/verify-otp:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Verify OTP for email or phone
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
  *               otp:
+ *                 type: string
+ *               token:
  *                 type: string
  *     responses:
  *       200:
@@ -66,7 +97,7 @@ router.post("/sign-up", AuthController.signUp);
  *       404:
  *         description: Invalid or expired OTP
  */
-router.post("/verify-otp", AuthController.verifyOtp);
+router.post("/verify-otp", AuthController.verifyOtpHandler);
 
 /**
  * @openapi
@@ -74,7 +105,7 @@ router.post("/verify-otp", AuthController.verifyOtp);
  *   post:
  *     tags:
  *       - Auth
- *     summary: Resend OTP for user sign-up
+ *     summary: Resend OTP to email or phone
  *     requestBody:
  *       required: true
  *       content:
@@ -84,15 +115,19 @@ router.post("/verify-otp", AuthController.verifyOtp);
  *             properties:
  *               email:
  *                 type: string
+ *               phone:
+ *                 type: string
+ *               country:
+ *                 type: string
  *     responses:
  *       200:
- *         description: New OTP sent successfully
+ *         description: OTP resent successfully
  *       400:
  *         description: Bad request
  *       404:
  *         description: No OTP request found
  */
-router.post("/resend-otp", AuthController.resendOtp);
+router.post("/resend-otp", AuthController.resendOTPHandler);
 
 /**
  * @openapi

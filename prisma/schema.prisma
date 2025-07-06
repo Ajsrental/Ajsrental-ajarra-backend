@@ -3,27 +3,27 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
   shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
-  id          String   @id @default(cuid())
-  firstName   String
-  middleName  String?
-  lastName    String
-  emailVerified                   Boolean                          @default(false)
-  phoneVerified                   Boolean                          @default(false)
-  phone       String?  @unique
-  email       String   @unique
-  password    String
-  role        UserRole @default(CLIENT)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  firstName     String
+  middleName    String?
+  lastName      String
+  emailVerified Boolean  @default(false)
+  phoneVerified Boolean  @default(false)
+  phone         String?  @unique
+  email         String   @unique
+  password      String
+  role          UserRole @default(CLIENT)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
-  vendor      Vendor?
-  passwordResetTokens PasswordResetToken[] 
+  vendor              Vendor?
+  passwordResetTokens PasswordResetToken[]
 }
 
 enum UserRole {
@@ -44,7 +44,7 @@ model Vendor {
   status           VendorStatus     @default(PENDING)
   userId           String           @unique // Enforce one-to-one User-Vendor
   user             User             @relation(fields: [userId], references: [id])
-  services         Service[]        // One-to-many: Vendor -> Services
+  services         Service[] // One-to-many: Vendor -> Services
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
@@ -56,11 +56,11 @@ enum VendorStatus {
 }
 
 enum YearsInBusiness {
-  ZERO_TO_ONE      // 0-1 years
-  TWO_TO_FIVE      // 2-5 years
-  SIX_TO_TEN       // 6-10 years
+  ZERO_TO_ONE // 0-1 years
+  TWO_TO_FIVE // 2-5 years
+  SIX_TO_TEN // 6-10 years
   ELEVEN_TO_TWENTY // 11-20 years
-  ABOVE_TWENTY     // 20+ years
+  ABOVE_TWENTY // 20+ years
 }
 
 enum BusinessCategory {
@@ -88,7 +88,7 @@ enum BusinessCategory {
 }
 
 model Service {
-  id              String      @id @default(cuid())
+  id              String       @id @default(cuid())
   name            String
   description     String
   images          String[]
@@ -100,9 +100,10 @@ model Service {
   fixedPrice      Int?
   startingPrice   Int?
   vendorId        String
-  vendor          Vendor      @relation(fields: [vendorId], references: [id])
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  vendor          Vendor       @relation(fields: [vendorId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
   @@unique([name, vendorId], name: "name_vendorId")
 }
 
@@ -129,26 +130,27 @@ enum Category {
 }
 
 model PasswordResetToken {
-  id         String   @id @default(uuid())
-  user       User     @relation(fields: [userId], references: [id])
-  userId     String
-  tokenHash  String
-  expiresAt  DateTime
-  used       Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
 
-//**Defining the signup request schema to store otp attempt*/
-model SignupRequest {
+//**Defining the verification request schema to store otp attempt*/
+model VerificationRequest {
   id        String        @id @default(cuid())
   ipAddress String
   userId    String        @unique
   status    String
-  email     String        @unique
+  email     String?       @unique
+  phone     String?       @unique   // <-- Add this line
   password  String
   idType    RequestIDType @default(PHONE)
   verified  Boolean       @default(false)
-  otp       String? // Field to store the generated OTP code
+  otp       String?
   otpExpiry DateTime?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
