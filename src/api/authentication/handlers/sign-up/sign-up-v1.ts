@@ -23,12 +23,12 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             return next(new BadRequestError("Invalid email format."));
         }
 
-        // Check if email already exists
-        const existingUser = await findUser({ email });
-        if (existingUser) {
-            logger.warn(`Attempt to sign up with existing email: ${email}`);
-            return next(new BadRequestError("A user with this email already exists."));
-        }
+        // // Check if email already exists
+        // const existingUser = await findUser({ email });
+        // if (existingUser) {
+        //     logger.warn(`Attempt to sign up with existing email: ${email}`);
+        //     return next(new BadRequestError("A user with this email already exists."));
+        // }
 
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
