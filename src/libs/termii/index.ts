@@ -31,10 +31,10 @@ export async function sendOTP(
             phoneNumber: response.to,
             tokenId: response.pinId,
         };
-    } catch (error) {
+    } catch (error:any) {
         return {
             status: "error",
-            message: error,
+            message: error?.response?.data?.message || error.message || "Unknown error",
         };
     }
 }
