@@ -7,6 +7,7 @@ import { generateOTP, getOTPExpiry } from "../../../../utils/generate-otp";
 import { sendWelcomeEmail } from "../../../../utils/emailService";
 import { prismaClient } from "../../../../utils/prisma";
 import { isValidEmail } from "../../../../utils/validations";
+import { formatPhoneToInternational } from "../../../../utils/phoneService";
 
 /**
  * Handler to send OTP to a phone number.
@@ -26,8 +27,20 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
 
     if (phone && country) {
         try {
+            const formattedPhoneNumber = formatPhoneToInternational(
+                phone,
+                country,
+            );
+
+            if (!formattedPhoneNumber) {
+                throw new BadRequestError("Invalid phone number or country code");
+            }
+
+
             logger.info(`Sending OTP to phone: ${phone}, country: ${country}`);
+
             const response = await sendOTP(phone, country);
+
             if (response.status === "error") {
                 const errorMessage = (response as any).message || "Failed to send OTP";
                 logger.warn(`Failed to send OTP: ${errorMessage}`);
@@ -49,8 +62,9 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
                 password = existingUser.password;
             }
 
+            
             await prismaClient.verificationRequest.upsert({
-                where: { phone }, // If you use phone as unique, otherwise adjust accordingly
+                where: { phone },
                 update: {
                     status: "pending",
                     verified: false,
@@ -58,6 +72,7 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
                     idType: "PHONE",
                     userId,
                     password,
+                    pinId: (response as any).tokenId, // <-- Store tokenId here
                 },
                 create: {
                     userId,
@@ -67,6 +82,7 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
                     status: "pending",
                     idType: "PHONE",
                     verified: false,
+                    pinId: (response as any).tokenId, // <-- Store pinId here
                 },
             });
 
@@ -155,7 +171,7 @@ export const verifyOtpHandler = async (
     res: Response,
     next: NextFunction
 ) => {
-    const { email, phone, otp, token } = req.body;
+    const { email, phone, otp } = req.body;
 
     // Require either email or phone
     if ((!email || email.trim() === "") && (!phone || phone.trim() === "")) {
@@ -231,7 +247,7 @@ export const verifyOtpHandler = async (
 
     // PHONE OTP VERIFICATION LOGIC
     if (phone) {
-        if (!otp || !token) {
+        if (!otp) {
             logger.warn("OTP or token missing in phone OTP verification.");
             return next(new BadRequestError("OTP and token are required for phone verification."));
         }
@@ -239,27 +255,28 @@ export const verifyOtpHandler = async (
         try {
 
     
-            logger.info(`Verifying OTP for phone: ${phone} with token: ${token}`);
-
-            const response = await verifyOTP(token, otp);
-            if (response.status !== "verified") {
-                logger.warn(`OTP verification failed: ${response.message}`);
-                return next(new BadRequestError(response.message || "OTP verification failed"));
-            }
+            logger.info(`Verifying OTP for phone: ${phone}`);
 
             // Find the corresponding verification request by phone
             const verificationRequest = await prismaClient.verificationRequest.findUnique({
                 where: { phone },
             });
 
-            const now = new Date();
-
-            if (!verificationRequest) {
-                logger.warn("Verification request not found for phone during user update.");
+            if (!verificationRequest || !verificationRequest.pinId) {
+                logger.warn("Verification request or pinId not found for phone during OTP verification.");
                 return res.status(HttpStatusCode.NOT_FOUND).json({
                     status: "error",
                     message: "Verification request not found.",
                 });
+            }
+
+            const now = new Date();
+
+            const response = await verifyOTP(verificationRequest.pinId, otp);
+            
+            if (response.status !== "verified") {
+                logger.warn(`OTP verification failed: ${response.message}`);
+                return next(new BadRequestError(response.message || "OTP verification failed"));
             }
 
             // Mark signup request as verified
@@ -414,6 +431,7 @@ export const resendOTPHandler = async (req: Request, res: Response, next: NextFu
                 data: {
                     status: "pending",
                     verified: false,
+                    pinId: (response as any).tokenId, // <-- Store pinId here
                 },
             });
 

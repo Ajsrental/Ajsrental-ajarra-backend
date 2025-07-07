@@ -41,7 +41,6 @@ export interface VerifyOtpRequestBody {
   email?: string;
   phone?: string;
   otp: string;
-  token?: string; // For phone verification if required
 }
 export interface VerifyOtpSuccessResponse {
   status: "ok";
@@ -84,6 +83,7 @@ export interface ResetPasswordSuccessResponse {
 }
 
 // Login
+
 // POST /api/v1/auth/login
 export interface LoginRequestBody {
   email: string;
