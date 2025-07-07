@@ -4,14 +4,16 @@ import { logger } from "../../../../utils/logger";
 
 export const createUser = async (data: Prisma.UserCreateInput) => {
     try {
-        const user = await prismaClient.user.create({
-            data,
+        const user = await prismaClient.user.upsert({
+            where: { email: data.email },
+            update: data,
+            create: data,
         });
-        logger.info("User created successfully", { userId: user.id });
+        logger.info("User upserted successfully", { userId: user.id });
         return user;
     } catch (error) {
-        logger.error("Error creating user", { error });
-        throw new Error('Failed to create user');
+        logger.error("Error upserting user", { error });
+        throw new Error('Failed to upsert user');
     }
 };
 
