@@ -143,7 +143,7 @@ model PasswordResetToken {
 model VerificationRequest {
   id        String        @id @default(cuid())
   ipAddress String
-  userId    String        @unique
+  userId    String        
   status    String
   email     String?       @unique
   phone     String?       @unique   // <-- Add this line
