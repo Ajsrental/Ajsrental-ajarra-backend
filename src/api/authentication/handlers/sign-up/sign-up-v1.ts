@@ -9,7 +9,7 @@ import { isValidEmail, isValidPhone } from "../../../../utils/validations";
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { firstName, middleName, lastName, email, password, role } = req.body;
+        const { firstName, middleName, lastName, email, phone , password, role } = req.body;
         
         // Validate required fields
         if (!firstName || !lastName || !email || !password) {
@@ -39,6 +39,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             middleName,
             lastName,
             email,
+            phone,
             password: hashedPassword,
             role: role && UserRole[role.toUpperCase() as keyof typeof UserRole]
                 ? role.toUpperCase() as UserRole
