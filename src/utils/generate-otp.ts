@@ -1,8 +1,8 @@
 import crypto from "crypto";
 
-// Function to generate a 6-digit OTP
+// Function to generate a 4-digit OTP
 export function generateOTP(): number {
-    return crypto.randomInt(100000, 999999);
+    return crypto.randomInt(1000, 10000); // 1000 to 9999 inclusive
 }
 
 // Function to calculate the expiry timestamp for the OTP (duration in minutes)

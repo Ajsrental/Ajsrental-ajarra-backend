@@ -30,7 +30,7 @@ export async function sendWithTermii(
             channel: "dnd",
             pin_attempts: 10,
             pin_time_to_live: duration,
-            pin_length: 6,
+            pin_length: 4,
             pin_placeholder: "< 1234 >",
             message_text:
                 message ||
