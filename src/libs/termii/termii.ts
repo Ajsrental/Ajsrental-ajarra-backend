@@ -18,7 +18,7 @@ type TermiiVerifyResponse = {
 export async function sendWithTermii(
     phone: string, //international phone format
     message?: string,
-    duration = 50,
+    duration = 5,
 ): Promise<TermiiSendResponse> {
     const token = await axios.post(
         `${process.env.TERMII_API_URL}/api/sms/otp/send`,
