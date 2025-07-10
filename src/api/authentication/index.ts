@@ -207,6 +207,35 @@ router.post("/forgot-password", AuthController.forgotPassword);
  */
 router.post("/reset-password/:token", AuthController.resetPassword);
 
+/**
+ * @openapi
+ * /auth/set-role:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Set the role for the currently authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role:
+ *                 type: string
+ *                 enum: [CLIENT, VENDOR, ADMIN]
+ *     responses:
+ *       200:
+ *         description: Role updated successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.post("/set-role", checkJwt, AuthController.setRole);
+
 
 /** Google handlers **/
 router.get('/google', AuthController.initiateGoogleLogin);
