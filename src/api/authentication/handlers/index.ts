@@ -5,3 +5,4 @@ export * from "./facebook-auth";
 export * from "./forgot-password";
 export * from "./reset-password";
 export * from "./otp";
+export * from "./set-roles";

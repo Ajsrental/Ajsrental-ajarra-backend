@@ -26,3 +26,20 @@ export const findUser = async (where: Prisma.UserWhereUniqueInput) => {
         throw new Error("Failed to find user");
     }
 };
+
+export const updateUser = async (
+    where: Prisma.UserWhereUniqueInput,
+    data: Prisma.UserUpdateInput
+) => {
+    try {
+        const updatedUser = await prismaClient.user.update({
+            where,
+            data,
+        });
+        logger.info("User updated successfully", { userId: updatedUser.id });
+        return updatedUser;
+    } catch (error) {
+        logger.error("Error updating user", { error });
+        throw new Error('Failed to update user');
+    }
+};

@@ -5,6 +5,7 @@
 export interface SignUpRequestBody {
   firstName: string;
   middleName?: string;
+  phone?: string;
   lastName: string;
   email: string;
   password: string;
@@ -16,6 +17,7 @@ export interface SignUpSuccessResponse {
   middleName?: string;
   lastName: string;
   email: string;
+  phone: string;
   role: "CLIENT" | "VENDOR" | "ADMIN";
   createdAt: string;
   updatedAt: string;
