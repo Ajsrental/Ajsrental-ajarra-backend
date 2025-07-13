@@ -8,7 +8,7 @@ export function formatPhoneToInternational(
         }
         return `234${phone}`;
     }
-    return "";
+    return phone;
 }
 
 export function formatPhoneToLocal(phone: string, country: string): string {
