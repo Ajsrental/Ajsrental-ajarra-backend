@@ -98,6 +98,23 @@ export interface LoginSuccessResponse {
   };
 } 
 
+// Set Role
+
+// POST /api/v1/auth/set-role
+export interface SetRoleRequestBody {
+  role: "CLIENT" | "VENDOR" | "ADMIN";
+}
+
+export interface SetRoleSuccessResponse {
+  status: "ok";
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    role: "CLIENT" | "VENDOR" | "ADMIN";
+  };
+}
+
 // VENDORS
 // Create Vendors
 // POST /api/v1/vendor/create)

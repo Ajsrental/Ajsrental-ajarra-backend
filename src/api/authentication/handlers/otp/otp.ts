@@ -8,6 +8,7 @@ import { sendWelcomeEmail } from "../../../../utils/emailService";
 import { prismaClient } from "../../../../utils/prisma";
 import { isValidEmail } from "../../../../utils/validations";
 import { formatPhoneToInternational } from "../../../../utils/phoneService";
+import { updateUser } from "../../services/database/user";
 
 /**
  * Handler to send OTP to a phone number.
@@ -18,6 +19,17 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
         phone?: string;
         country?: string;
     } = req.body;
+
+    // Access the user attached by the middleware
+    const signupUser = (req as any).signupUser;
+
+    if (!signupUser) {
+        logger.warn("No signup user found in request.");
+        return next(new BadRequestError("User not authenticated for OTP operation."));
+    }
+
+    // Example usage: use signupUser.id and signupUser.email
+    logger.info(`Sending OTP for user: ${signupUser.id}, email: ${signupUser.email}`);
 
     // Require at least email or phone to be present
     if ((!email || email.trim() === "") && (!phone || phone.trim() === "")) {
@@ -37,9 +49,9 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
             }
 
 
-            logger.info(`Sending OTP to phone: ${phone}, country: ${country}`);
+            logger.info(`Sending OTP to phone: ${formattedPhoneNumber}, country: ${country}`);
 
-            const response = await sendOTP(phone, country);
+            const response = await sendOTP(formattedPhoneNumber, country);
 
             if (response.status === "error") {
                 const errorMessage = (response as any).message || "Failed to send OTP";
@@ -47,11 +59,24 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
                 return next(new BadRequestError(errorMessage));
             }
 
-            // Find existing user by phone
-            const existingUser = await findUser({ phone });
+            // Add phone number to the user
+            try 
+            { await updateUser(
+                { id: signupUser.id },
+                { phone: formattedPhoneNumber }
+            ); } 
+                catch (error:any) 
+            {
+
+                logger.error("Error updating user phone number:", error);
+                return next(new InternalServerError("Failed to update user phone number"));
+            }
+
+            // Find existing user by email
+            const existingUser = await findUser({ email: signupUser.email });
             if (!existingUser) {
                 logger.warn("No user found for sign-up OTP.");
-                return next(new BadRequestError("No user found with this phone."));
+                return next(new BadRequestError("No user found with this email."));
             }
 
             let userId = "";
@@ -64,7 +89,7 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
 
             
             await prismaClient.verificationRequest.upsert({
-                where: { phone },
+                where: { phone:formattedPhoneNumber },
                 update: {
                     status: "pending",
                     verified: false,
@@ -77,7 +102,7 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
                 create: {
                     userId,
                     ipAddress: req.ip || "",
-                    phone: phone,
+                    phone: formattedPhoneNumber,
                     password,
                     status: "pending",
                     idType: "PHONE",
@@ -247,19 +272,32 @@ export const verifyOtpHandler = async (
 
     // PHONE OTP VERIFICATION LOGIC
     if (phone) {
+
         if (!otp) {
             logger.warn("OTP or token missing in phone OTP verification.");
             return next(new BadRequestError("OTP and token are required for phone verification."));
         }
 
+        const country = "nga";
+
+        const formattedPhoneNumber = formatPhoneToInternational(
+            phone,
+            country,
+        );
+
+        if (!formattedPhoneNumber) {
+            throw new BadRequestError("Invalid phone number or country code");
+        }
+
+
         try {
 
     
-            logger.info(`Verifying OTP for phone: ${phone}`);
+            logger.info(`Verifying OTP for phone: ${formattedPhoneNumber}`);
 
             // Find the corresponding verification request by phone
             const verificationRequest = await prismaClient.verificationRequest.findUnique({
-                where: { phone },
+                where: { phone: formattedPhoneNumber },
             });
 
             if (!verificationRequest || !verificationRequest.pinId) {
@@ -297,7 +335,7 @@ export const verifyOtpHandler = async (
                 },
             });
                
-            logger.info(`OTP verified successfully for phone: ${phone}`);
+            logger.info(`OTP verified successfully for phone: ${formattedPhoneNumber}`);
             return res.status(HttpStatusCode.OK).json({
                 status: "ok",
                 message: "OTP verified successfully. Your phone is now confirmed.",
@@ -393,9 +431,21 @@ export const resendOTPHandler = async (req: Request, res: Response, next: NextFu
 
     // PHONE OTP RESEND LOGIC
     if (phone && country) {
+
+        const formattedPhoneNumber = formatPhoneToInternational(
+            phone,
+            country,
+        );
+
+        if (!formattedPhoneNumber) {
+            throw new BadRequestError("Invalid phone number or country code");
+        }
+
         try {
-            logger.info(`Resending OTP to phone: ${phone}, country: ${country}`);
-            const response = await sendOTP(phone, country);
+            
+            logger.info(`Resending OTP to phone: ${formattedPhoneNumber}, country: ${country}`);
+            const response = await sendOTP(formattedPhoneNumber, country);
+
             if (response.status === "error") {
                 const errorMessage = (response as any).message || "Failed to resend OTP";
                 logger.warn(`Failed to resend OTP: ${errorMessage}`);
@@ -405,7 +455,7 @@ export const resendOTPHandler = async (req: Request, res: Response, next: NextFu
 
             // Find the corresponding verification request by phone
             const verificationRequest = await prismaClient.verificationRequest.findUnique({
-                where: { phone },
+                where: { phone: formattedPhoneNumber }, // Use formatted phone number
             });
 
             if (!verificationRequest) {
@@ -427,7 +477,7 @@ export const resendOTPHandler = async (req: Request, res: Response, next: NextFu
 
             // Update the verification request 
             await prismaClient.verificationRequest.update({
-                where: { phone },
+                where: { phone: formattedPhoneNumber },
                 data: {
                     status: "pending",
                     verified: false,
@@ -436,7 +486,7 @@ export const resendOTPHandler = async (req: Request, res: Response, next: NextFu
             });
 
 
-            logger.info(`OTP resent and verification request updated for phone: ${phone}`);
+            logger.info(`OTP resent and verification request updated for phone: ${formattedPhoneNumber}`);
             return res.status(200).json({
                 status: "ok",
                 message: "OTP resent successfully to your phone.",
