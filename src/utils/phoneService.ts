@@ -12,7 +12,7 @@ export function formatPhoneToInternational(
         // If it's already in international format or doesn't start with 0, assume it's correct
         return phone;
     }
-    return phone;
+    return "";
 }
 
 export function formatPhoneToLocal(phone: string, country: string): string {
