@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as AuthController from "./handlers";
-import { checkJwt } from "../../middlewares/checkJwt";
+import { checkJwt, checkSignupToken } from "../../middlewares/checkJwt";
 
 const router = Router({ mergeParams: true });
 
@@ -65,7 +65,7 @@ router.post("/sign-up", AuthController.signUp);
  *       400:
  *         description: Bad request
  */
-router.post("/send-otp", AuthController.sendOTPHandler);
+router.post("/send-otp", checkSignupToken, AuthController.sendOTPHandler);
 
 /**
  * @openapi
@@ -97,7 +97,7 @@ router.post("/send-otp", AuthController.sendOTPHandler);
  *       404:
  *         description: Invalid or expired OTP
  */
-router.post("/verify-otp", AuthController.verifyOtpHandler);
+router.post("/verify-otp", checkSignupToken, AuthController.verifyOtpHandler);
 
 /**
  * @openapi
@@ -127,7 +127,7 @@ router.post("/verify-otp", AuthController.verifyOtpHandler);
  *       404:
  *         description: No OTP request found
  */
-router.post("/resend-otp", AuthController.resendOTPHandler);
+router.post("/resend-otp", checkSignupToken, AuthController.resendOTPHandler);
 
 /**
  * @openapi
@@ -155,7 +155,7 @@ router.post("/resend-otp", AuthController.resendOTPHandler);
  *      401:
  *        description: Unauthorized
  */
-router.post("/login", AuthController.login);
+router.post("/login", checkSignupToken, AuthController.login);
 
 /**
  * @openapi

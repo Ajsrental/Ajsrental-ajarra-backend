@@ -15,6 +15,7 @@ export interface CustomRequest extends Request {
     token?: AuthTokenPayload;
     user?: User; // You can replace 'any' with the actual user type if you have it defined elsewhere
 }
+
 export const checkJwt = async (
     req: Request,
     res: Response,
@@ -57,6 +58,44 @@ export const checkJwt = async (
         (req as CustomRequest).user = user;
         (req as CustomRequest).token = payload;
 
+        next();
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Middleware to check for signup token in Authorization header
+export const checkSignupToken = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const token = extractTokenFromHeaders(req);
+        if (!token) {
+            throw new UnauthorizedError("No signup token provided");
+        }
+
+        // Optionally verify the token (if you want to check validity)
+        const payload = await verifyToken(token);
+        if (!payload.id) {
+            throw new UnauthorizedError("Malformed signup token");
+        }
+
+        // Fetch the user from the database using the token payload
+        const user = await prismaClient.user.findUnique({
+            where: {
+                id: payload.id as string,
+            },
+        });
+
+        if (!user) {
+            throw new UnauthorizedError("User not found");
+        }
+
+        // Attach payload and user to request for downstream use
+        (req as any).signupToken = payload;
+        (req as any).signupUser = user;
         next();
     } catch (error) {
         next(error);

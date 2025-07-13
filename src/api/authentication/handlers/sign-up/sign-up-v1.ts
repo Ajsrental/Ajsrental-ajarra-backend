@@ -5,11 +5,11 @@ import { createUser, findUser } from "../../services/database/user";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { isValidEmail, isValidPhone } from "../../../../utils/validations";
-
+import { generateToken } from "../../../../utils/jwt";
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { firstName, middleName, lastName, email, phone , password, role } = req.body;
+        const { firstName, middleName, lastName, email, password, role } = req.body;
         
         // Validate required fields
         if (!firstName || !lastName || !email || !password) {
@@ -39,18 +39,21 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             middleName,
             lastName,
             email,
-            phone,
             password: hashedPassword,
             role: role && UserRole[role.toUpperCase() as keyof typeof UserRole]
                 ? role.toUpperCase() as UserRole
                 : UserRole.CLIENT,
         });
 
+        // Generate sign-up token (JWT)
+        const signUpToken = generateToken({ id: user.id });
+
         // Return user info (omit password)
         const { password: _, ...userWithoutPassword } = user;
         res.status(HttpStatusCode.CREATED).json({
             ...userWithoutPassword,
-            message: "Sign up successful."
+            message: "Sign up successful.",
+            token: signUpToken,
         });
     } catch (error) {
         logger.error("Error during user sign-up:", error);
