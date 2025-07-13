@@ -3,10 +3,14 @@ export function formatPhoneToInternational(
     country: string,
 ): string {
     if (country === "nga") {
+        if (phone.startsWith("234")) {
+            return phone;
+        }
         if (phone.startsWith("0")) {
             return `234${phone.slice(1)}`;
         }
-        return `234${phone}`;
+        // If it's already in international format or doesn't start with 0, assume it's correct
+        return phone;
     }
     return phone;
 }
