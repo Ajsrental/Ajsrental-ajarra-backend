@@ -80,3 +80,29 @@ export const getServicesByVendorId = async (vendorId: string) => {
 export const getVendorByUserId = async (userId: string) => {
     return prismaClient.vendor.findUnique({ where: { userId } });
 };
+
+/**
+ * Updates services by vendorId with any provided fields.
+ * @param vendorId - The vendor ID whose services to update.
+ * @param data - The fields to update (partial Service fields).
+ * @returns The result of the update operation.
+ */
+export const updateServiceByVendorId = async (
+    vendorId: string,
+    data: Partial<Omit<Prisma.ServiceUpdateInput, "vendor">>
+) => {
+    try {
+        const result = await prismaClient.service.updateMany({
+            where: { vendorId },
+            data: {
+                ...data,
+                updatedAt: new Date(),
+            },
+        });
+        logger.info("Service(s) updated by vendorId", { vendorId, count: result.count });
+        return result;
+    } catch (error) {
+        logger.error("Error updating services by vendorId", { error });
+        throw new Error("Failed to update services");
+    }
+};

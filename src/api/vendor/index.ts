@@ -111,4 +111,114 @@ router.get("/get-services", VendorController.getServicesHandler);
  */
 router.post("/create-service", VendorController.createServiceHandler);
 
+/**
+ * @openapi
+ * /vendor/get-profile-information:
+ *   get:
+ *     tags:
+ *       - Vendor
+ *     summary: Get profile information for the authenticated user (email, phone, vendorId, serviceName, serviceLocation, serviceDescription)
+ *     responses:
+ *       200:
+ *         description: Profile information returned successfully
+ */
+
+router.get("/get-profile-information", VendorController.getProfileInformationHandler);
+
+/**
+ * @openapi
+ * /vendor/update-service-description:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the description for all services of the authenticated user's vendor profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Service description updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-service-description", VendorController.updateServiceDescriptionHandler);
+
+/**
+ * @openapi
+ * /vendor/update-service-location:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the location for all services of the authenticated user's vendor profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               location:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Service location updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-service-location", VendorController.updateServiceLocationHandler);
+
+/**
+ * @openapi
+ * /vendor/update-email:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the email for the authenticated user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-email", VendorController.updateEmailHandler);
+
+/**
+ * @openapi
+ * /vendor/update-phone-number:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the phone number for the authenticated user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Phone number updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-phone-number", VendorController.updatePhoneNumberHandler);
+
 export default router;  
