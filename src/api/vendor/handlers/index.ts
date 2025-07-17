@@ -8,4 +8,7 @@ export * from "./update-location";
 export * from  "./update-service-name";
 export * from "./update-email";
 export * from "./update-phone-number";
+export * from "./create-payout-information";
+export * from "./get-payout-information";
+export * from "./update-payout-information";
 
