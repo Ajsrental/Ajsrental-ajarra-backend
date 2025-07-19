@@ -155,7 +155,7 @@ router.post("/resend-otp", checkSignupToken, AuthController.resendOTPHandler);
  *      401:
  *        description: Unauthorized
  */
-router.post("/login", checkSignupToken, AuthController.login);
+router.post("/login", AuthController.login);
 
 /**
  * @openapi
