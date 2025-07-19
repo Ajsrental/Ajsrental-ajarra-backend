@@ -11,8 +11,9 @@ import { formatPhoneToInternational } from "../../../../utils/phoneService";
 import { updateUser } from "../../services/database/user";
 
 /**
- * Handler to send OTP to a phone number.
- */
+* Handler to send OTP to a phone number.
+*/
+
 export const sendOTPHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { email, phone, country }: {
         email?: string;

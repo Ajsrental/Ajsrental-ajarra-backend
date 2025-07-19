@@ -1,37 +1,57 @@
-import { Resend } from 'resend';
 import { logger } from './logger';
+import nodemailer  from 'nodemailer';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 /**
- * Send an email using Resend
- */
-export const sendEmail = async ({ to, subject, html, text }: { to: string, subject: string, html?: string, text?: string }) => {
-    try {
-        const { data, error } = await resend.emails.send({
-            from: 'Acme <onboarding@resend.dev>',
-            to: [to],
-            subject,
-            // Use either react or html/text, not both. If you want to use html/text, cast as any to bypass type error:
-            ...(html || text ? { html, text } : {}),
-            // react: <YourReactComponent /> // Uncomment and use this if you want to use react-based emails
-        } as any);
+ * Create email transporter
+ * @returns {Object} - Nodemailer transporter
+*/
 
-        if (error) {
-            logger.error('Resend email error:', error);
-            throw error;
-        }
-
-        if (data) {
-            logger.info(`Email sent: ${data.id}`);
-        } else {
-            logger.warn('Email sent but no data returned.');
-        }
-        return data;
-    } catch (err) {
-        logger.error('Email send failed:', err);
-        throw err;
+const createTransporter = () => {
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',  // Replace with correct SMTP host
+    port: 465,
+    secure: true,  // Use true for 465, false for other ports
+    auth: {
+      user: 'devteam@formvive.com',
+      pass: 'ilszjcmzxyklspue'  // Use app-specific password if using Gmail
     }
+  });
+};
+
+
+/**
+ * Generic email sender using the configured transporter
+ */
+export const sendEmail = async ({
+  to,
+  subject,
+  html,
+  text,
+}: {
+  to: string;
+  subject: string;
+  html?: string;
+  text?: string;
+}) => {
+  try {
+    const transporter = createTransporter();
+
+    const mailOptions = {
+      from: '"Ajarra Team" <devteam@formvive.com>',  // adjust 'from' as needed
+      to,
+      subject,
+      text,
+      html,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    logger.info(`Email sent: ${info.messageId}`);
+    return info;
+  } catch (error: any) {
+    logger.error('Error sending email:', error);
+    throw error;
+  }
 };
 
 /**
