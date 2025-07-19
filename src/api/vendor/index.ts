@@ -111,4 +111,208 @@ router.get("/get-services", VendorController.getServicesHandler);
  */
 router.post("/create-service", VendorController.createServiceHandler);
 
+/**
+ * @openapi
+ * /vendor/get-profile-information:
+ *   get:
+ *     tags:
+ *       - Vendor
+ *     summary: Get profile information for the authenticated user (email, phone, vendorId, serviceName, serviceLocation, serviceDescription)
+ *     responses:
+ *       200:
+ *         description: Profile information returned successfully
+ */
+
+router.get("/get-profile-information", VendorController.getProfileInformationHandler);
+
+/**
+ * @openapi
+ * /vendor/update-service-description:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the description for all services of the authenticated user's vendor profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Service description updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-service-description", VendorController.updateServiceDescriptionHandler);
+
+/**
+ * @openapi
+ * /vendor/update-service-location:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the location for all services of the authenticated user's vendor profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               location:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Service location updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-service-location", VendorController.updateServiceLocationHandler);
+
+/**
+ * @openapi
+ * /vendor/update-email:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the email for the authenticated user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Email updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-email", VendorController.updateEmailHandler);
+
+/**
+ * @openapi
+ * /vendor/update-phone-number:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the phone number for the authenticated user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Phone number updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-phone-number", VendorController.updatePhoneNumberHandler);
+
+/**
+ * @openapi
+ * /vendor/update-service-name:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update the name for all services of the authenticated user's vendor profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Service name updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-service-name", VendorController.updateServiceNameHandler);
+
+/**
+ * @openapi
+ * /vendor/create-payout-account:
+ *   post:
+ *     tags:
+ *       - Vendor
+ *     summary: Create payout account for the authenticated user's vendor profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bankName: { type: string }
+ *               accountHolderName: { type: string }
+ *               accountNumber: { type: string }
+ *               accountType: { type: string, enum: [SAVINGS, CURRENT] }
+ *               utilityBillUrl: { type: string }
+ *               validIdUrl: { type: string }
+ *               businessCertUrl: { type: string }
+ *     responses:
+ *       201:
+ *         description: Payout account created successfully
+ *       400:
+ *         description: Bad request
+ */
+router.post("/create-payout-account", VendorController.createPayoutAccountHandler);
+
+/**
+ * @openapi
+ * /vendor/get-payout-information:
+ *   get:
+ *     tags:
+ *       - Vendor
+ *     summary: Get payout account information for the authenticated user's vendor profile
+ *     responses:
+ *       200:
+ *         description: Payout information returned successfully
+ *       400:
+ *         description: Bad request
+ */
+router.get("/get-payout-information", VendorController.getPayoutInformationHandler);
+
+/**
+ * @openapi
+ * /vendor/update-payout-information:
+ *   patch:
+ *     tags:
+ *       - Vendor
+ *     summary: Update payout account information for the authenticated user's vendor profile
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bankName: { type: string }
+ *               accountHolderName: { type: string }
+ *               accountNumber: { type: string }
+ *               accountType: { type: string, enum: [SAVINGS, CURRENT] }
+ *     responses:
+ *       200:
+ *         description: Payout information updated successfully
+ *       400:
+ *         description: Bad request
+ */
+router.patch("/update-payout-information", VendorController.updatePayoutInformationHandler);
+
 export default router;  

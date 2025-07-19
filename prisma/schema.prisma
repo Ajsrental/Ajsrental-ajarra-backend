@@ -45,6 +45,7 @@ model Vendor {
   userId           String           @unique // Enforce one-to-one User-Vendor
   user             User             @relation(fields: [userId], references: [id])
   services         Service[] // One-to-many: Vendor -> Services
+  vendorAccounts   VendorAccount[] // Add this line for the relation
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
 }
@@ -143,16 +144,16 @@ model PasswordResetToken {
 model VerificationRequest {
   id        String        @id @default(cuid())
   ipAddress String
-  userId    String        
+  userId    String
   status    String
   email     String?       @unique
-  phone     String?       @unique   // <-- Add this line
+  phone     String?       @unique // <-- Add this line
   password  String
   idType    RequestIDType @default(PHONE)
   verified  Boolean       @default(false)
   otp       String?
   otpExpiry DateTime?
-  pinId     String?       // <-- Add this line
+  pinId     String? // <-- Add this line
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 }
@@ -160,4 +161,32 @@ model VerificationRequest {
 enum RequestIDType {
   PHONE
   EMAIL
+}
+
+model VendorAccount {
+  id                 String             @id @default(cuid())
+  vendorId           String             @unique
+  bankName           String
+  accountHolderName  String
+  accountNumber      String
+  accountType        AccountType
+  utilityBillUrl     String? // File URL or path for uploaded utility bill
+  validIdUrl         String? // File URL or path for uploaded valid ID
+  businessCertUrl    String? // File URL or path for uploaded business certificate
+  verificationStatus VerificationStatus @default(PENDING)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  vendor Vendor @relation(fields: [vendorId], references: [id])
+}
+
+enum AccountType {
+  SAVINGS
+  CURRENT
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }

@@ -158,6 +158,108 @@ export interface UpdateVendorSuccessResponse {
   message: string; // e.g., "Vendor updated successfully"
 }
 
+// Get Profile Information
+// GET /api/v1/vendor/get-profile-information
+export interface GetProfileInformationRequest { } // No request body, uses JWT for user
+
+export interface GetProfileInformationResponse {
+  email: string;
+  phone: string;
+  vendorId: string;
+  serviceName: string;
+  serviceLocation: string;
+  serviceDescription: string;
+}
+
+// Update Email
+// PATCH /api/v1/vendor/update-email
+export interface UpdateEmailRequest {
+  email: string;
+}
+
+export interface UpdateEmailResponse {
+  status: "ok";
+  message: string;
+  user: {
+    id: string;
+    email: string;
+  };
+}
+
+// Update Phone Number
+// PATCH /api/v1/vendor/update-phone-number
+export interface UpdatePhoneNumberRequest {
+  phone: string;
+}
+
+export interface UpdatePhoneNumberResponse {
+  status: "ok";
+  message: string;
+  user: {
+    id: string;
+    phone: string;
+  };
+}
+
+// Create Payout Account
+// POST /api/v1/vendor/create-payout-account
+export interface CreatePayoutAccountRequest {
+  bankName: string;
+  accountHolderName: string;
+  accountNumber: string;
+  accountType: "SAVINGS" | "CURRENT";
+  utilityBillUrl?: string;
+  validIdUrl?: string;
+  businessCertUrl?: string;
+}
+export interface CreatePayoutAccountResponse {
+  id: string;
+  vendorId: string;
+  bankName: string;
+  accountHolderName: string;
+  accountNumber: string;
+  accountType: "SAVINGS" | "CURRENT";
+  utilityBillUrl?: string;
+  validIdUrl?: string;
+  businessCertUrl?: string;
+  verificationStatus: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Get Payout Information
+// GET /api/v1/vendor/get-payout-information
+export interface GetPayoutInformationRequest { } // No request body, uses JWT for user
+
+export interface GetPayoutInformationResponse {
+  id: string;
+  vendorId: string;
+  bankName: string;
+  accountHolderName: string;
+  accountNumber: string;
+  accountType: "SAVINGS" | "CURRENT";
+  utilityBillUrl?: string;
+  validIdUrl?: string;
+  businessCertUrl?: string;
+  verificationStatus: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Update Payout Information
+// PATCH /api/v1/vendor/update-payout-information
+export interface UpdatePayoutInformationRequest {
+  bankName: string;
+  accountHolderName: string;
+  accountNumber: string;
+  accountType: "SAVINGS" | "CURRENT";
+}
+export interface UpdatePayoutInformationResponse {
+  status: "ok";
+  message: string;
+  updatedCount: number;
+}
+
 // Services 
 // Create service
 // Post /api/v1/vendor/create-service
@@ -230,6 +332,39 @@ export interface ServiceItem {
 
 export interface GetServicesResponse {
   services: ServiceItem[];
+}
+
+// Update Service Description
+// PATCH /api/v1/vendor/update-service-description
+export interface UpdateServiceDescriptionRequest {
+  description: string;
+}
+
+export interface UpdateServiceDescriptionResponse {
+  status: "ok";
+  message: string;
+}
+
+// Update Service Location
+// PATCH /api/v1/vendor/update-service-location
+export interface UpdateServiceLocationRequest {
+  location: string;
+}
+
+export interface UpdateServiceLocationResponse {
+  status: "ok";
+  message: string;
+}
+
+// Update Service Name
+// PATCH /api/v1/vendor/update-service-name
+export interface UpdateServiceNameRequest {
+  name: string;
+}
+
+export interface UpdateServiceNameResponse {
+  status: "ok";
+  message: string;
 }
 
 // Admin 
