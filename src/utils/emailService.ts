@@ -1,6 +1,7 @@
 import { logger } from './logger';
 import nodemailer  from 'nodemailer';
 
+const gmailAppPassword = process.env.GMAIL_APP_PASSWORD 
 
 /**
  * Create email transporter
@@ -13,8 +14,8 @@ const createTransporter = () => {
     port: 465,
     secure: true,  // Use true for 465, false for other ports
     auth: {
-      user: 'devteam@formvive.com',
-      pass: 'ilszjcmzxyklspue'  // Use app-specific password if using Gmail
+      user: 'ajarradev@gmail.com',
+      pass: gmailAppPassword  // Use app-specific password if using Gmail
     }
   });
 };
@@ -38,7 +39,7 @@ export const sendEmail = async ({
     const transporter = createTransporter();
 
     const mailOptions = {
-      from: '"Ajarra Team" <devteam@formvive.com>',  // adjust 'from' as needed
+      from: '"Ajarra Team" <ajarradev@gmail.com>',  // adjust 'from' as needed
       to,
       subject,
       text,
