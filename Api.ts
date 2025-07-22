@@ -84,6 +84,20 @@ export interface ResetPasswordSuccessResponse {
   message: string;
 }
 
+// Change Password
+// POST /api/v1/auth/change-password
+
+export interface ChangePasswordRequestBody {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface ChangePasswordSuccessResponse {
+  status: "success";
+  message: string;
+}
+
 // Login
 
 // POST /api/v1/auth/login
