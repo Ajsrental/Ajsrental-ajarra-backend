@@ -6,3 +6,4 @@ export * from "./forgot-password";
 export * from "./reset-password";
 export * from "./otp";
 export * from "./set-roles";
+export * from "./change-password";

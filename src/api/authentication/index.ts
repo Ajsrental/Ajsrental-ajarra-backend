@@ -236,6 +236,46 @@ router.post("/reset-password/:token", AuthController.resetPassword);
  */
 router.post("/set-role", checkJwt, AuthController.setRole);
 
+/**
+ * @openapi
+ * /auth/change-password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Change password for the authenticated user
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *               - confirmPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 example: OldPass123!
+ *               newPassword:
+ *                 type: string
+ *                 example: NewPass456@
+ *               confirmPassword:
+ *                 type: string
+ *                 example: NewPass456@
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ *  
+ *       400:
+ *         description: Bad request (e.g. fields missing or mismatched passwords)
+ *    
+ *       401:
+ *         description: Unauthorized (e.g. wrong current password)
+ */
+router.post("/change-password", checkJwt, AuthController.changePassword);
 
 /** Google handlers **/
 router.get('/google', AuthController.initiateGoogleLogin);
