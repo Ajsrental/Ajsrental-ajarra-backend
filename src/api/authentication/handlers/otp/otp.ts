@@ -60,17 +60,24 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
                 return next(new BadRequestError(errorMessage));
             }
 
-            // Add phone number to the user
-            try 
-            { await updateUser(
-                { id: signupUser.id },
-                { phone: formattedPhoneNumber }
-            ); } 
-                catch (error:any) 
-            {
+            // Checking if phone number record exists for user
 
-                logger.error("Error updating user phone number:", error);
-                return next(new InternalServerError("Failed to update user phone number"));
+            if (!signupUser.phone) {
+
+                logger.info("No phone number found for user, updating phone number.");
+
+                // Add phone number to the user
+                try {
+                    await updateUser(
+                        { id: signupUser.id },
+                        { phone: formattedPhoneNumber }
+                    );
+                }
+                catch (error: any) {
+
+                    logger.error("Error updating user phone number:", error);
+                    return next(new InternalServerError("Failed to update user phone number"));
+                }
             }
 
             // Find existing user by email
@@ -88,9 +95,8 @@ export const sendOTPHandler = async (req: Request, res: Response, next: NextFunc
                 password = existingUser.password;
             }
 
-            
             await prismaClient.verificationRequest.upsert({
-                where: { phone:formattedPhoneNumber },
+                where: { phone: formattedPhoneNumber },
                 update: {
                     status: "pending",
                     verified: false,
@@ -251,7 +257,7 @@ export const verifyOtpHandler = async (
                     message: "Verification request not found.",
                 });
             }
-            
+
             await prismaClient.user.update({
                 where: { id: verificationRequest.userId },
                 data: {
@@ -293,7 +299,7 @@ export const verifyOtpHandler = async (
 
         try {
 
-    
+
             logger.info(`Verifying OTP for phone: ${formattedPhoneNumber}`);
 
             // Find the corresponding verification request by phone
@@ -312,7 +318,7 @@ export const verifyOtpHandler = async (
             const now = new Date();
 
             const response = await verifyOTP(verificationRequest.pinId, otp);
-            
+
             if (response.status !== "verified") {
                 logger.warn(`OTP verification failed: ${response.message}`);
                 return next(new BadRequestError(response.message || "OTP verification failed"));
@@ -335,7 +341,7 @@ export const verifyOtpHandler = async (
                     phoneVerified: true,
                 },
             });
-               
+
             logger.info(`OTP verified successfully for phone: ${formattedPhoneNumber}`);
             return res.status(HttpStatusCode.OK).json({
                 status: "ok",
@@ -352,6 +358,7 @@ export const verifyOtpHandler = async (
 /**
  * Handler to resend OTP to a phone number.
  */
+
 export const resendOTPHandler = async (req: Request, res: Response, next: NextFunction) => {
     const { email, phone, country }: { email?: string; phone?: string; country?: string } = req.body;
 
@@ -443,7 +450,7 @@ export const resendOTPHandler = async (req: Request, res: Response, next: NextFu
         }
 
         try {
-            
+
             logger.info(`Resending OTP to phone: ${formattedPhoneNumber}, country: ${country}`);
             const response = await sendOTP(formattedPhoneNumber, country);
 
