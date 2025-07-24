@@ -19,6 +19,8 @@ model User {
   email         String   @unique
   password      String
   role          UserRole @default(CLIENT)
+  provider      String? // 'local', 'google', etc.
+  providerId    String?  @unique // Google user ID (`profile.id`)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
