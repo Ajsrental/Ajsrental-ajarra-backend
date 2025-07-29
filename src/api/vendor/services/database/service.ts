@@ -1,5 +1,6 @@
 import { prismaClient } from "../../../../utils/prisma";
 import type { Prisma } from "@prisma/client";
+import { ServiceName, ServiceCategory, PricingModel, AvailableHours } from "@prisma/client";
 import { logger } from "../../../../utils/logger";
 
 /**
@@ -12,6 +13,14 @@ export const createService = async (
     data: Omit<Prisma.ServiceCreateInput, "vendor"> & { vendorId: string }
 ) => {
     try {
+        
+        if (!Object.values(PricingModel).includes(data.pricingModel as PricingModel)) {
+            throw new Error("Invalid pricing model.");
+        }
+        if (!Object.values(AvailableHours).includes(data.availableHours as AvailableHours)) {
+            throw new Error("Invalid available hours.");
+        }
+
         const service = await prismaClient.service.upsert({
             where: {
                 name_vendorId: {
@@ -22,9 +31,9 @@ export const createService = async (
             update: {
                 description: data.description,
                 images: data.images,
-                serviceCategory: data.serviceCategory,
                 location: data.location,
                 pricingModel: data.pricingModel,
+                availableHours: data.availableHours,
                 minPrice: data.minPrice,
                 maxPrice: data.maxPrice,
                 fixedPrice: data.fixedPrice,
@@ -35,9 +44,9 @@ export const createService = async (
                 name: data.name,
                 description: data.description,
                 images: data.images,
-                serviceCategory: data.serviceCategory,
                 location: data.location,
                 pricingModel: data.pricingModel,
+                availableHours: data.availableHours,
                 minPrice: data.minPrice,
                 maxPrice: data.maxPrice,
                 fixedPrice: data.fixedPrice,
@@ -72,14 +81,6 @@ export const getServicesByVendorId = async (vendorId: string) => {
     }
 };
 
-/**
- * Retrieves a vendor by userId.
- * @param userId - The ID of the user whose vendor profile to fetch.
- * @returns The vendor record or null.
- */
-export const getVendorByUserId = async (userId: string) => {
-    return prismaClient.vendor.findUnique({ where: { userId } });
-};
 
 /**
  * Updates services by vendorId with any provided fields.

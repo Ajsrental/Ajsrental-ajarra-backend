@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { getVendorByUserId, getServicesByVendorId } from "../../services/database/service";
+import { getServicesByVendorId } from "../../services/database/service";
+import { getVendorByUserId } from "../../services/database/vendor";
 import { HttpStatusCode, InternalServerError, BadRequestError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { CustomRequest } from "../../../../middlewares/checkJwt";

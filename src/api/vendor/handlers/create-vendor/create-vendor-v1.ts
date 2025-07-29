@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { createVendor } from "../../services/database/vendor";
+import { createVendorWithServices } from "../../services/database/vendor";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
-import { YearsInBusiness, BusinessCategory, VendorStatus } from "@prisma/client";
+import { YearsInBusiness, VendorStatus, ServiceCategory, ServiceName } from "@prisma/client";
 import { CustomRequest } from "../../../../middlewares/checkJwt";
 
 export const createVendorHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -19,10 +19,11 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             rcNumber,
             nin,
             yearsInBusiness,
-            businessCategory,
+            serviceCategory,
             phoneNumber,
             businessAddress,
-            status
+            status,
+            services // Array of strings: ["DJ", "MC_HOST"]
         } = req.body;
 
         // Validate required fields
@@ -31,9 +32,11 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             !rcNumber ||
             !nin ||
             !yearsInBusiness ||
-            !businessCategory ||
+            !serviceCategory ||
             !phoneNumber ||
-            !businessAddress
+            !businessAddress ||
+            !Array.isArray(services) ||
+            services.length === 0
         ) {
             logger.warn("Missing required fields in vendor creation.");
             return next(new BadRequestError("Missing required fields."));
@@ -44,25 +47,32 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             logger.warn("Invalid yearsInBusiness value.");
             return next(new BadRequestError("Invalid yearsInBusiness value."));
         }
-        if (!Object.values(BusinessCategory).includes(businessCategory)) {
-            logger.warn("Invalid businessCategory value.");
-            return next(new BadRequestError("Invalid businessCategory value."));
+        if (!Object.values(ServiceCategory).includes(serviceCategory)) {
+            logger.warn("Invalid serviceCategory value.");
+            return next(new BadRequestError("Invalid serviceCategory value."));
         }
         if (status && !Object.values(VendorStatus).includes(status)) {
             logger.warn("Invalid status value.");
             return next(new BadRequestError("Invalid status value."));
         }
+        for (const serviceName of services) {
+            if (!Object.values(ServiceName).includes(serviceName)) {
+                return next(new BadRequestError(`Invalid service name: ${serviceName}`));
+            }
+        }
 
-        const vendor = await createVendor({
+
+        const vendor = await createVendorWithServices({
             businessName,
             rcNumber,
             nin,
             yearsInBusiness,
-            businessCategory,
+            serviceCategory,
             phoneNumber,
             businessAddress,
             status: status || VendorStatus.PENDING,
-            userId: user.id
+            userId: user.id,
+            services: services, 
         });
 
         res.status(HttpStatusCode.CREATED).json(vendor);

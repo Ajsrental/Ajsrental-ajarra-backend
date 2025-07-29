@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { CustomRequest } from "../../../../middlewares/checkJwt";
-import { getVendorByUserId, getServicesByVendorId, updateServiceByVendorId } from "../../services/database/service";
+import { getServicesByVendorId, updateServiceByVendorId } from "../../services/database/service";
+import { getVendorByUserId } from "../../services/database/vendor";
 
 export const updateServiceLocationHandler = async (
     req: Request,

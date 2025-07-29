@@ -9,47 +9,118 @@ datasource db {
 }
 
 model User {
-  id            String   @id @default(cuid())
-  firstName     String
-  middleName    String?
-  lastName      String
-  emailVerified Boolean  @default(false)
-  phoneVerified Boolean  @default(false)
-  phone         String?  @unique
-  email         String   @unique
-  password      String
-  role          UserRole @default(CLIENT)
-  provider      String? // 'local', 'google', etc.
-  providerId    String?  @unique // Google user ID (`profile.id`)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  vendor              Vendor?
+  id                  String               @id @default(cuid())
+  firstName           String
+  middleName          String?
+  lastName            String
+  emailVerified       Boolean              @default(false)
+  phoneVerified       Boolean              @default(false)
+  phone               String?              @unique
+  email               String               @unique
+  password            String
+  role                UserRole             @default(CLIENT)
+  provider            String?
+  providerId          String?              @unique
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
   passwordResetTokens PasswordResetToken[]
+  vendor              Vendor?
+}
+
+model Vendor {
+  id              String          @id @default(cuid())
+  businessName    String
+  rcNumber        String          @unique
+  nin             String
+  yearsInBusiness YearsInBusiness
+  serviceCategory ServiceCategory
+  phoneNumber     String
+  businessAddress String
+  status          VendorStatus    @default(PENDING)
+  userId          String          @unique
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  services        Service[]
+  user            User            @relation(fields: [userId], references: [id])
+  vendorAccounts  VendorAccount?
+  vendorServices  VendorService[]
+}
+
+model VendorService {
+  id       String          @id @default(cuid())
+  vendorId String
+  category ServiceCategory
+  name     ServiceName     @unique
+  vendor   Vendor          @relation(fields: [vendorId], references: [id])
+}
+
+model Service {
+  id             String         @id @default(cuid())
+  name           String
+  description    String
+  location       String
+  pricingModel   PricingModel
+  availableHours AvailableHours
+  images         String[]
+  minPrice       Int?
+  maxPrice       Int?
+  fixedPrice     Int?
+  startingPrice  Int?
+  vendorId       String
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  vendor         Vendor         @relation(fields: [vendorId], references: [id])
+
+  @@unique([name, vendorId], name: "name_vendorId")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model VerificationRequest {
+  id        String        @id @default(cuid())
+  ipAddress String
+  userId    String
+  status    String
+  email     String?       @unique
+  phone     String?       @unique
+  password  String
+  idType    RequestIDType @default(PHONE)
+  verified  Boolean       @default(false)
+  otp       String?
+  otpExpiry DateTime?
+  pinId     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model VendorAccount {
+  id                 String             @id @default(cuid())
+  vendorId           String             @unique
+  bankName           String
+  accountHolderName  String
+  accountNumber      String
+  accountType        AccountType
+  utilityBillUrl     String?
+  validIdUrl         String?
+  businessCertUrl    String?
+  verificationStatus VerificationStatus @default(PENDING)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  vendor             Vendor             @relation(fields: [vendorId], references: [id])
 }
 
 enum UserRole {
   VENDOR
   ADMIN
   CLIENT
-}
-
-model Vendor {
-  id               String           @id @default(cuid())
-  businessName     String
-  rcNumber         String           @unique
-  nin              String
-  yearsInBusiness  YearsInBusiness
-  businessCategory BusinessCategory
-  phoneNumber      String
-  businessAddress  String
-  status           VendorStatus     @default(PENDING)
-  userId           String           @unique // Enforce one-to-one User-Vendor
-  user             User             @relation(fields: [userId], references: [id])
-  services         Service[] // One-to-many: Vendor -> Services
-  vendorAccounts   VendorAccount[] // Add this line for the relation
-  createdAt        DateTime         @default(now())
-  updatedAt        DateTime         @updatedAt
 }
 
 enum VendorStatus {
@@ -59,55 +130,50 @@ enum VendorStatus {
 }
 
 enum YearsInBusiness {
-  ZERO_TO_ONE // 0-1 years
-  TWO_TO_FIVE // 2-5 years
-  SIX_TO_TEN // 6-10 years
-  ELEVEN_TO_TWENTY // 11-20 years
-  ABOVE_TWENTY // 20+ years
+  ZERO_TO_ONE
+  TWO_TO_FIVE
+  SIX_TO_TEN
+  ELEVEN_TO_TWENTY
+  ABOVE_TWENTY
 }
 
-enum BusinessCategory {
+enum ServiceCategory {
+  DECOR_AND_LIGHTING
+  ENTERTAINMENT_AND_MEDIA
+  FASHION_BEAUTY_AND_STYLING
+  FOOD_AND_BEVERAGE
+  BEAUTY_AND_STYLING
+  LOGISTICS
+  PLANNING_AND_COORDINATION
+}
+
+enum ServiceName {
+  DJ
+  ENTERTAINMENT
+  MC_HOST
+  PHOTO_BOOTH
+  PHOTOGRAPHER
+  VIDEOGRAPHER
+  ASOEBI
+  COSTUMES
+  FABRICS
+  HAIR_STYLIST
+  MAKEUP_ARTIST
+  WEDDING_DRESSES
+  EVENT_DECORATOR
+  FLORIST
+  LIGHTING
+  RENTALS
+  SOUND_AND_PA_SYSTEM_PROVIDER
+  SOUVENIRS
   BAKER
   BARTENDER
   CATERER
-  DJ
-  ENTERTAINMENT
-  EVENT_DECORATOR
+  LOGISTICS_SERVICE
+  TRANSPORTATION
   EVENT_PLANNER
-  FLORIST
-  HAIR_STYLIST
-  PHOTOGRAPHER
-  MAKEUP_ARTIST
-  MC_HOST
-  PHOTO_BOOTH
-  RENTALS
   SECURITY
-  SOUND_AND_PA_SYSTEM_PROVIDER
-  SOUVENIRS
-  TRANSPORTATION_AND_LOGISTICS_SERVICE
   USHERS
-  VIDEOGRAPHER
-  OTHER
-}
-
-model Service {
-  id              String       @id @default(cuid())
-  name            String
-  description     String
-  images          String[]
-  serviceCategory Category
-  location        String
-  pricingModel    PricingModel
-  minPrice        Int?
-  maxPrice        Int?
-  fixedPrice      Int?
-  startingPrice   Int?
-  vendorId        String
-  vendor          Vendor       @relation(fields: [vendorId], references: [id])
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
-
-  @@unique([name, vendorId], name: "name_vendorId")
 }
 
 enum PricingModel {
@@ -123,63 +189,9 @@ enum AvailableHours {
   AlwaysAvailable
 }
 
-enum Category {
-  BeautyAndStyling
-  DecorAndLightening
-  EntertainmentAndMedia
-  FoodAndBeverage
-  Logistics
-  PlanningAndCoordination
-}
-
-model PasswordResetToken {
-  id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  tokenHash String
-  expiresAt DateTime
-  used      Boolean  @default(false)
-  createdAt DateTime @default(now())
-}
-
-//**Defining the verification request schema to store otp attempt*/
-model VerificationRequest {
-  id        String        @id @default(cuid())
-  ipAddress String
-  userId    String
-  status    String
-  email     String?       @unique
-  phone     String?       @unique // <-- Add this line
-  password  String
-  idType    RequestIDType @default(PHONE)
-  verified  Boolean       @default(false)
-  otp       String?
-  otpExpiry DateTime?
-  pinId     String? // <-- Add this line
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-}
-
 enum RequestIDType {
   PHONE
   EMAIL
-}
-
-model VendorAccount {
-  id                 String             @id @default(cuid())
-  vendorId           String             @unique
-  bankName           String
-  accountHolderName  String
-  accountNumber      String
-  accountType        AccountType
-  utilityBillUrl     String? // File URL or path for uploaded utility bill
-  validIdUrl         String? // File URL or path for uploaded valid ID
-  businessCertUrl    String? // File URL or path for uploaded business certificate
-  verificationStatus VerificationStatus @default(PENDING)
-  createdAt          DateTime           @default(now())
-  updatedAt          DateTime           @updatedAt
-
-  vendor Vendor @relation(fields: [vendorId], references: [id])
 }
 
 enum AccountType {

@@ -20,7 +20,7 @@ router.use(checkJwt);
  *   post:
  *     tags:
  *       - Vendor
- *     summary: Create or update a vendor profile for the authenticated user
+ *     summary: Create a vendor profile for the authenticated user
  *     requestBody:
  *       required: true
  *       content:
@@ -31,13 +31,19 @@ router.use(checkJwt);
  *               businessName: { type: string }
  *               rcNumber: { type: string }
  *               nin: { type: string }
- *               yearsInBusiness: { type: string }
- *               businessCategory: { type: string }
+ *               yearsInBusiness: { type: string, enum: [LESS_THAN_ONE, ONE_TO_TWO, TWO_TO_FIVE, FIVE_TO_TEN, TEN_PLUS] }
+ *               serviceCategory: { type: string }
  *               phoneNumber: { type: string }
  *               businessAddress: { type: string }
+ *               status: { type: string }
+ *               services:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of service names (max 2 per category, e.g. ["DJ", "MC_HOST"])
  *     responses:
  *       201:
- *         description: Vendor created or updated successfully
+ *         description: Vendor created successfully
  */
 router.post("/create", VendorController.createVendorHandler);
 
@@ -58,10 +64,16 @@ router.post("/create", VendorController.createVendorHandler);
  *               businessName: { type: string }
  *               rcNumber: { type: string }
  *               nin: { type: string }
- *               yearsInBusiness: { type: string }
- *               businessCategory: { type: string }
+ *               yearsInBusiness: { type: string, enum: [LESS_THAN_ONE, ONE_TO_TWO, TWO_TO_FIVE, FIVE_TO_TEN, TEN_PLUS] }
+ *               serviceCategory: { type: string }
  *               phoneNumber: { type: string }
  *               businessAddress: { type: string }
+ *               status: { type: string }
+ *               services:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of service names (max 2 per category, e.g. ["DJ", "MC_HOST"])
  *     responses:
  *       200:
  *         description: Vendor updated successfully
@@ -95,16 +107,43 @@ router.get("/get-services", VendorController.getServicesHandler);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - description
+ *               - images
+ *               - location
+ *               - pricingModel
+ *               - availableHours
  *             properties:
- *               name: { type: string }
- *               description: { type: string }
- *               images: { type: array, items: { type: string } }
- *               serviceCategory: { type: string }
- *               location: { type: string }
- *               pricingModel: { type: string }
- *               priceMin: { type: integer }
- *               priceMax: { type: integer }
- *               priceFixed: { type: integer }
+ *               name:
+ *                 type: string
+ *                 description: Service name (must be a valid enum value)
+ *               description:
+ *                 type: string
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               location:
+ *                 type: string
+ *               pricingModel:
+ *                 type: string
+ *                 enum: [FixedPrice, PriceRange, StartingFrom, CustomQuote]
+ *               availableHours:
+ *                 type: string
+ *                 description: Must be a valid AvailableHours enum value
+ *               minPrice:
+ *                 type: integer
+ *                 nullable: true
+ *               maxPrice:
+ *                 type: integer
+ *                 nullable: true
+ *               fixedPrice:
+ *                 type: integer
+ *                 nullable: true
+ *               startingPrice:
+ *                 type: integer
+ *                 nullable: true
  *     responses:
  *       201:
  *         description: Service created successfully

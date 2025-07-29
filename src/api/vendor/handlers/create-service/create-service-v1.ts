@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from "express";
-import { createService, getVendorByUserId } from "../../services/database/service";
+import { createService } from "../../services/database/service";
+import { getVendorByUserId } from "../../services/database/vendor";
+import {  PricingModel, AvailableHours } from "@prisma/client";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
-import { Category, PricingModel } from "@prisma/client";
 import { CustomRequest } from "../../../../middlewares/checkJwt";
 
 export const createServiceHandler = async (req: Request, res: Response, next: NextFunction) => {
@@ -19,36 +20,35 @@ export const createServiceHandler = async (req: Request, res: Response, next: Ne
             name,
             description,
             images,
-            serviceCategory,
             location,
             pricingModel,
+            availableHours,
             minPrice,
             maxPrice,
             fixedPrice,
             startingPrice
         } = req.body;
 
+
         // Validate required fields
         if (
             !name ||
             !description ||
             !images ||
-            !serviceCategory ||
             !location ||
-            !pricingModel
+            !pricingModel ||
+            !availableHours
         ) {
             logger.warn("Missing required fields in service creation.");
             return next(new BadRequestError("Missing required fields."));
         }
 
         // Validate enums
-        if (!Object.values(Category).includes(serviceCategory)) {
-            logger.warn("Invalid serviceCategory value.");
-            return next(new BadRequestError("Invalid serviceCategory value."));
-        }
         if (!Object.values(PricingModel).includes(pricingModel)) {
-            logger.warn("Invalid pricingModel value.");
-            return next(new BadRequestError("Invalid pricingModel value."));
+            return next(new BadRequestError("Invalid pricing model."));
+        }
+        if (!Object.values(AvailableHours).includes(availableHours)) {
+            return next(new BadRequestError("Invalid available hours."));
         }
 
         // Pricing model checks
@@ -85,14 +85,14 @@ export const createServiceHandler = async (req: Request, res: Response, next: Ne
             name,
             description,
             images,
-            serviceCategory,
             location,
             pricingModel,
+            availableHours,
             minPrice,
             maxPrice,
             fixedPrice,
             startingPrice,
-            vendorId: vendor.id
+            vendorId: vendor.id,
         });
 
         res.status(HttpStatusCode.CREATED).json(service);

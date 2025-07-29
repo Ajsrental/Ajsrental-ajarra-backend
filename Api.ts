@@ -110,7 +110,7 @@ export interface LoginSuccessResponse {
   data: {
     token: string;
   };
-} 
+}
 
 // Set Role
 
@@ -136,10 +136,18 @@ export interface CreateVendorRequestBody {
   businessName: string;
   rcNumber: string;
   nin: string;
-  yearsInBusiness: "ZERO_TO_ONE" | "TWO_TO_FIVE" | "SIX_TO_TEN" | "ELEVEN_TO_TWENTY" | "ABOVE_TWENTY";
-  businessCategory: string; // e.g., "RENTALS", "CATERER", etc.
+  yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
+  serviceCategory:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
   phoneNumber: string;
   businessAddress: string;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
+  services: string[]; // e.g. ["DJ", "MC_HOST"]
 }
 
 
@@ -148,13 +156,25 @@ export interface CreateVendorResponse {
   businessName: string;
   rcNumber: string;
   nin: string;
-  yearsInBusiness: "ZERO_TO_ONE" | "TWO_TO_FIVE" | "SIX_TO_TEN" | "ELEVEN_TO_TWENTY" | "ABOVE_TWENTY";
-  businessCategory: string;
+  yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
+  serviceCategory:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
   phoneNumber: string;
   businessAddress: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
   userId: string;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
+  createdAt: string;
+  updatedAt: string;
+  vendorServices: {
+    id: string;
+    name: string;
+    category: string;
+  }[];
 }
 
 // Update Vendors
@@ -163,11 +183,20 @@ export interface UpdateVendorRequestBody {
   businessName?: string;
   rcNumber?: string;
   nin?: string;
-  yearsInBusiness?: "ZERO_TO_ONE" | "TWO_TO_FIVE" | "SIX_TO_TEN" | "ELEVEN_TO_TWENTY" | "ABOVE_TWENTY";
-  businessCategory?: string; // e.g., "RENTALS", "CATERER", etc.
+  yearsInBusiness?: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
+  serviceCategory?:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
   phoneNumber?: string;
   businessAddress?: string;
+  status?: "PENDING" | "APPROVED" | "REJECTED";
+  services?: string[]; // e.g. ["DJ", "MC_HOST"]
 }
+
 export interface UpdateVendorSuccessResponse {
   message: string; // e.g., "Vendor updated successfully"
 }
@@ -281,15 +310,9 @@ export interface CreateServiceRequest {
   name: string;
   description: string;
   images: string[];
-  serviceCategory:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
-  | "Logistics"
-  | "PlanningAndCoordination";
   location: string;
   pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
+  availableHours: string;
   minPrice?: number;
   maxPrice?: number;
   fixedPrice?: number;
@@ -301,22 +324,16 @@ export interface CreateServiceResponse {
   name: string;
   description: string;
   images: string[];
-  serviceCategory:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
-  | "Logistics"
-  | "PlanningAndCoordination";
   location: string;
   pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
+  availableHours: string;
   minPrice?: number | null;
   maxPrice?: number | null;
   fixedPrice?: number | null;
   startingPrice?: number | null;
   vendorId: string;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Get Services
