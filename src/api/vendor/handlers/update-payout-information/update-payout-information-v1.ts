@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { getVendorByUserId } from "../../services/database/service";
+import { getVendorByUserId } from "../../services/database/vendor";
 import { updateVendorAccount } from "../../services/database/vendorAccount";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";

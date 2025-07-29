@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { HttpStatusCode, InternalServerError, BadRequestError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { CustomRequest } from "../../../../middlewares/checkJwt";
-import { getVendorByUserId, getServicesByVendorId } from "../../services/database/service";
+import { getServicesByVendorId } from "../../services/database/service";
+import { getVendorByUserId } from "../../services/database/vendor";
 import { findUser } from "../../../authentication/services/database/user";
 
 export const getProfileInformationHandler = async (

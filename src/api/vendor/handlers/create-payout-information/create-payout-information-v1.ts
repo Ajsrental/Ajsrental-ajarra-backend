@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { createVendorAccount } from "../../services/database/vendorAccount";
-import { getVendorByUserId } from "../../services/database/service";
+import { getVendorByUserId } from "../../services/database/vendor";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { AccountType, VerificationStatus } from "@prisma/client";
