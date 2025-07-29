@@ -6,10 +6,11 @@ import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../.
 import { logger } from "../../../../utils/logger";
 import { isValidEmail, isValidPhone } from "../../../../utils/validations";
 import { generateToken } from "../../../../utils/jwt";
+import { formatPhoneToInternational } from "../../../../utils/phoneService";
 
 export const signUp = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { firstName, middleName, lastName, email, password, role } = req.body;
+        const { firstName, middleName, phone, lastName, email, password, role } = req.body;
         
         // Validate required fields
         if (!firstName || !lastName || !email || !password) {
@@ -22,6 +23,13 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             logger.warn("Invalid email format.");
             return next(new BadRequestError("Invalid email format."));
         }
+
+        const country = "nga";
+
+        const formattedPhoneNumber = formatPhoneToInternational(
+                        phone,
+                        country,
+        );
 
         // Check if email already exists
         const existingUser = await findUser({ email });
@@ -38,6 +46,7 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
             firstName,
             middleName,
             lastName,
+            phone: formattedPhoneNumber,
             email,
             password: hashedPassword,
             role: role && UserRole[role.toUpperCase() as keyof typeof UserRole]
