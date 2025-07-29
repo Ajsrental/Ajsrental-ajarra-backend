@@ -1,6 +1,6 @@
 export function formatPhoneToInternational(
     phone: string,
-    country: string,
+    country?: string,
 ): string {
     if (country === "nga") {
         if (phone.startsWith("234")) {
