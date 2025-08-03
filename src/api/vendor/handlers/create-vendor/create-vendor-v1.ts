@@ -4,6 +4,8 @@ import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../.
 import { logger } from "../../../../utils/logger";
 import { YearsInBusiness, VendorStatus, ServiceCategory, ServiceName } from "@prisma/client";
 import { CustomRequest } from "../../../../middlewares/checkJwt";
+import { lookUpNIN } from "../../../../libs/dojah/dojah";
+import { DOJAHNinResponse } from "../../../../types/dojah";
 
 export const createVendorHandler = async (req: Request, res: Response, next: NextFunction) => {
     const customReq = req as CustomRequest;
@@ -13,6 +15,7 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
         logger.warn("User ID missing in request.");
         return next(new InternalServerError("User not found"));
     }
+
     try {
         const {
             businessName,
@@ -59,6 +62,21 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             if (!Object.values(ServiceName).includes(serviceName)) {
                 return next(new BadRequestError(`Invalid service name: ${serviceName}`));
             }
+        }
+
+        // Validate NIN
+        let verificationResult: DOJAHNinResponse;
+        try {
+            if(nin) {
+                verificationResult = await lookUpNIN(nin);
+                if (!verificationResult || !verificationResult.entity) {
+                    logger.warn("NIN verification failed or returned no data.");
+                    return next(new BadRequestError("NIN verification failed."));
+                }
+            }
+        } catch (error:any) {
+            logger.error("Error during NIN verification:", error);
+            return next(new InternalServerError("Internal server error"));
         }
 
 

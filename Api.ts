@@ -343,15 +343,9 @@ export interface ServiceItem {
   name: string;
   description: string;
   images: string[];
-  serviceCategory:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
-  | "Logistics"
-  | "PlanningAndCoordination";
   location: string;
   pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
+  availableHours: string;
   minPrice?: number | null;
   maxPrice?: number | null;
   fixedPrice?: number | null;
@@ -402,18 +396,26 @@ export interface UpdateServiceNameResponse {
 // Get Vendors
 // GET /api/v1/admin/vendors
 export interface Vendor {
-  id: string;
+  id: string; 
   businessName: string;
   rcNumber: string;
   nin: string;
-  yearsInBusiness: "ZERO_TO_ONE" | "TWO_TO_FIVE" | "SIX_TO_TEN" | "ELEVEN_TO_TWENTY" | "ABOVE_TWENTY";
-  businessCategory: string;
+  yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
+  serviceCategory:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
   phoneNumber: string;
   businessAddress: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
+  services: string[]; // e.g. ["DJ", "MC_HOST"]
   userId: string;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
+
 }
 
 export interface GetAllVendorsResponse {
@@ -432,11 +434,18 @@ export interface Vendor {
   businessName: string;
   rcNumber: string;
   nin: string;
-  yearsInBusiness: "ZERO_TO_ONE" | "TWO_TO_FIVE" | "SIX_TO_TEN" | "ELEVEN_TO_TWENTY" | "ABOVE_TWENTY";
-  businessCategory: string;
+  yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
+  serviceCategory:
+  | "BeautyAndStyling"
+  | "DecorAndLightening"
+  | "EntertainmentAndMedia"
+  | "FoodAndBeverage"
+  | "Logistics"
+  | "PlanningAndCoordination";
   phoneNumber: string;
   businessAddress: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
+  services: string[]; // e.g. ["DJ", "MC_HOST"]
   userId: string;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string

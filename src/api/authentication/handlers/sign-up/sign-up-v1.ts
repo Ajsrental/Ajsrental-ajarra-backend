@@ -27,8 +27,8 @@ export const signUp = async (req: Request, res: Response, next: NextFunction) =>
         const country = "nga";
 
         const formattedPhoneNumber = formatPhoneToInternational(
-                        phone,
-                        country,
+                phone,
+                country,
         );
 
         // Check if email already exists
