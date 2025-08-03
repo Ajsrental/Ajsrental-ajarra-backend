@@ -8,7 +8,7 @@ import { logger } from "../../utils/logger";
 const baseUrl = process.env.DOJAH_API_URL;
 
 logger.info(
-    `Dojah API URL: ${baseUrl}, App ID: ${process.env.DOJAH_APP_ID}, Secret Key: ${process.env.DOJAH_SK}`,
+    `Dojah API URL: ${baseUrl}, App ID: ${process.env.DOJAH_API_ID}, Secret Key: ${process.env.DOJAH_SK}`,
 );
 
 export async function lookUpBVN(
@@ -19,7 +19,7 @@ export async function lookUpBVN(
             `${baseUrl}/api/v1/kyc/bvn/full?bvn=${bvn}`,
             {
                 headers: {
-                    AppId: process.env.DOJAH_APP_ID,
+                    AppId: process.env.DOJAH_API_ID,
                     Authorization: process.env.DOJAH_SK,
                 },
             },
@@ -50,7 +50,7 @@ export async function lookUpNIN(
             `${baseUrl}/api/v1/kyc/nin?nin=${nin}`,
             {
                 headers: {
-                    AppId: process.env.DOJAH_APP_ID,
+                    AppId: process.env.DOJAH_API_ID,
                     Authorization: process.env.DOJAH_SK,
                 },
             },
