@@ -3,7 +3,7 @@ import type {
     DOJAHBvnResponse,
     DOJAHNinResponse,
 } from "../../types/dojah";
-
+import { logger } from "../../utils/logger";
 
 const baseUrl = process.env.DOJAH_API_URL;
 
