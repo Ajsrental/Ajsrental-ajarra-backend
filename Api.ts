@@ -326,6 +326,45 @@ export interface UpdatePayoutInformationResponse {
   updatedCount: number;
 }
 
+// Get Bookings
+// GET /api/v1/vendor/get-bookings
+export interface GetBookingsRequest { } // No request body, uses JWT for user
+
+export interface BookingItem {
+  id: string;
+  vendorId: string;
+  service: string;
+  clientName?: string | null;
+  bookingDate: string;
+  notes?: string | null;
+  status: string;
+  amount?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetBookingsResponse {
+  bookings: BookingItem[];
+}
+
+// Get Vendor Notifications
+// GET /api/v1/vendor/get-notifications
+export interface GetVendorNotificationsRequest { } // No request body, uses JWT for user
+
+export interface NotificationItem {
+  id: string;
+  userId: string;
+  bookingId?: string | null;
+  type: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface GetVendorNotificationsResponse {
+  notifications: NotificationItem[];
+}
+
 // Services 
 // Create service
 // Post /api/v1/vendor/create-service
