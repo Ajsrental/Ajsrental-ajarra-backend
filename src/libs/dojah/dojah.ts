@@ -7,6 +7,10 @@ import { logger } from "../../utils/logger";
 
 const baseUrl = process.env.DOJAH_API_URL;
 
+logger.info(
+    `Dojah API URL: ${baseUrl}, App ID: ${process.env.DOJAH_APP_ID}, Secret Key: ${process.env.DOJAH_SK}`,
+);
+
 export async function lookUpBVN(
     bvn: string,
 ): Promise<DOJAHBvnResponse> {
