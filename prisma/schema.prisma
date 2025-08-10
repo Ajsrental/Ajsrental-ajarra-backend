@@ -4,8 +4,8 @@ generator client {
 
 datasource db {
   provider          = "postgresql"
-  url               = env("DEV_DOCKER_DATABASE")
-  shadowDatabaseUrl = env("DEV_DOCKER_SHADOW_DATABASE")
+  url               = env("DEV_DATABASE_URL")
+  shadowDatabaseUrl = env("DEV_SHADOW_DATABASE_URL")
 }
 
 model User {
@@ -25,7 +25,7 @@ model User {
   updatedAt           DateTime             @updatedAt
   passwordResetTokens PasswordResetToken[]
   vendor              Vendor?
-  notification       Notification[] @relation("UserNotifications")
+  notification        Notification[]       @relation("UserNotifications")
 
   @@index([role])
   @@index([email])
@@ -232,18 +232,18 @@ enum VerificationStatus {
 }
 
 model Booking {
-  id          String        @id @default(uuid())
-  vendor      Vendor        @relation(fields: [vendorId], references: [id])
-  vendorId    String
-  service     String
-  clientName  String?
-  bookingDate DateTime
-  notes       String?
-  status      BookingStatus @default(PENDING)
-  amount      Float?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  notifications  Notification[]  @relation("BookingNotifications")
+  id            String         @id @default(uuid())
+  vendor        Vendor         @relation(fields: [vendorId], references: [id])
+  vendorId      String
+  service       String
+  clientName    String?
+  bookingDate   DateTime
+  notes         String?
+  status        BookingStatus  @default(PENDING)
+  amount        Float?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[] @relation("BookingNotifications")
 
   @@index([vendorId])
   @@index([status])
@@ -260,15 +260,15 @@ enum BookingStatus {
 }
 
 model Notification {
-  id             String           @id @default(uuid())
-  userId         String
-  bookingId      String?
-  type           NotificationType
-  message        String
-  read           Boolean          @default(false)
-  createdAt      DateTime         @default(now())
-  user           User             @relation("UserNotifications", fields: [userId], references: [id])
-  booking        Booking?         @relation("BookingNotifications", fields: [bookingId], references: [id])
+  id        String           @id @default(uuid())
+  userId    String
+  bookingId String?
+  type      NotificationType
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation("UserNotifications", fields: [userId], references: [id])
+  booking   Booking?         @relation("BookingNotifications", fields: [bookingId], references: [id])
 }
 
 enum NotificationType {
