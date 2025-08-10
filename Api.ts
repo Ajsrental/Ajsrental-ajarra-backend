@@ -129,6 +129,34 @@ export interface SetRoleSuccessResponse {
   };
 }
 
+export type ServiceName =
+  | "DJ"
+  | "ENTERTAINMENT"
+  | "MC_HOST"
+  | "PHOTO_BOOTH"
+  | "PHOTOGRAPHER"
+  | "VIDEOGRAPHER"
+  | "ASOEBI"
+  | "COSTUMES"
+  | "FABRICS"
+  | "HAIR_STYLIST"
+  | "MAKEUP_ARTIST"
+  | "WEDDING_DRESSES"
+  | "EVENT_DECORATOR"
+  | "FLORIST"
+  | "LIGHTING"
+  | "RENTALS"
+  | "SOUND_AND_PA_SYSTEM_PROVIDER"
+  | "SOUVENIRS"
+  | "BAKER"
+  | "BARTENDER"
+  | "CATERER"
+  | "LOGISTICS_SERVICE"
+  | "TRANSPORTATION"
+  | "EVENT_PLANNER"
+  | "SECURITY"
+  | "USHERS";
+
 // VENDORS
 // Create Vendors
 // POST /api/v1/vendor/create)
@@ -147,7 +175,7 @@ export interface CreateVendorRequestBody {
   phoneNumber: string;
   businessAddress: string;
   status?: "PENDING" | "APPROVED" | "REJECTED";
-  services: string[]; // e.g. ["DJ", "MC_HOST"]
+  services: ServiceName[]; // e.g. ["DJ", "MC_HOST"]
 }
 
 
@@ -170,11 +198,6 @@ export interface CreateVendorResponse {
   userId: string;
   createdAt: string;
   updatedAt: string;
-  vendorServices: {
-    id: string;
-    name: string;
-    category: string;
-  }[];
 }
 
 // Update Vendors
@@ -194,7 +217,7 @@ export interface UpdateVendorRequestBody {
   phoneNumber?: string;
   businessAddress?: string;
   status?: "PENDING" | "APPROVED" | "REJECTED";
-  services?: string[]; // e.g. ["DJ", "MC_HOST"]
+  services?: ServiceName[]; // e.g. ["DJ", "MC_HOST"]
 }
 
 export interface UpdateVendorSuccessResponse {
@@ -303,6 +326,45 @@ export interface UpdatePayoutInformationResponse {
   updatedCount: number;
 }
 
+// Get Bookings
+// GET /api/v1/vendor/get-bookings
+export interface GetBookingsRequest { } // No request body, uses JWT for user
+
+export interface BookingItem {
+  id: string;
+  vendorId: string;
+  service: string;
+  clientName?: string | null;
+  bookingDate: string;
+  notes?: string | null;
+  status: string;
+  amount?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetBookingsResponse {
+  bookings: BookingItem[];
+}
+
+// Get Vendor Notifications
+// GET /api/v1/vendor/get-notifications
+export interface GetVendorNotificationsRequest { } // No request body, uses JWT for user
+
+export interface NotificationItem {
+  id: string;
+  userId: string;
+  bookingId?: string | null;
+  type: string;
+  message: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface GetVendorNotificationsResponse {
+  notifications: NotificationItem[];
+}
+
 // Services 
 // Create service
 // Post /api/v1/vendor/create-service
@@ -312,7 +374,7 @@ export interface CreateServiceRequest {
   images: string[];
   location: string;
   pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
-  availableHours: string;
+  availableHours: "ByAppointmentOnly" | "OpenForSelectedHours" | "AlwaysAvailable";
   minPrice?: number;
   maxPrice?: number;
   fixedPrice?: number;
@@ -326,7 +388,7 @@ export interface CreateServiceResponse {
   images: string[];
   location: string;
   pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
-  availableHours: string;
+  availableHours: "ByAppointmentOnly" | "OpenForSelectedHours" | "AlwaysAvailable";
   minPrice?: number | null;
   maxPrice?: number | null;
   fixedPrice?: number | null;
@@ -345,7 +407,7 @@ export interface ServiceItem {
   images: string[];
   location: string;
   pricingModel: "FixedPrice" | "PriceRange" | "StartingFrom" | "CustomQuote";
-  availableHours: string;
+  availableHours: "ByAppointmentOnly" | "OpenForSelectedHours" | "AlwaysAvailable";
   minPrice?: number | null;
   maxPrice?: number | null;
   fixedPrice?: number | null;
@@ -411,7 +473,6 @@ export interface Vendor {
   phoneNumber: string;
   businessAddress: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
-  services: string[]; // e.g. ["DJ", "MC_HOST"]
   userId: string;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
@@ -445,7 +506,6 @@ export interface Vendor {
   phoneNumber: string;
   businessAddress: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
-  services: string[]; // e.g. ["DJ", "MC_HOST"]
   userId: string;
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string

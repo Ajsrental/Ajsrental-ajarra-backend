@@ -354,4 +354,72 @@ router.get("/get-payout-information", VendorController.getPayoutInformationHandl
  */
 router.patch("/update-payout-information", VendorController.updatePayoutInformationHandler);
 
+/**
+ * @openapi
+ * /vendor/get-bookings:
+ *   get:
+ *     tags:
+ *       - Vendor
+ *     summary: Get all bookings associated with the authenticated user's vendor profile
+ *     responses:
+ *       200:
+ *         description: List of bookings returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 bookings:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: string }
+ *                       vendorId: { type: string }
+ *                       service: { type: string }
+ *                       clientName: { type: string, nullable: true }
+ *                       bookingDate: { type: string, format: date-time }
+ *                       notes: { type: string, nullable: true }
+ *                       status: { type: string }
+ *                       amount: { type: number, nullable: true }
+ *                       createdAt: { type: string, format: date-time }
+ *                       updatedAt: { type: string, format: date-time }
+ *       400:
+ *         description: Bad request
+ */
+router.get("/get-bookings", VendorController.getBookingsHandler);
+
+/**
+ * @openapi
+ * /vendor/get-notifications:
+ *   get:
+ *     tags:
+ *       - Vendor
+ *     summary: Get all notifications associated with the authenticated user's vendor profile
+ *     responses:
+ *       200:
+ *         description: List of notifications returned successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 notifications:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: string }
+ *                       userId: { type: string }
+ *                       bookingId: { type: string, nullable: true }
+ *                       type: { type: string }
+ *                       message: { type: string }
+ *                       read: { type: boolean }
+ *                       createdAt: { type: string, format: date-time }
+ *       400:
+ *         description: Bad request
+ */
+router.get("/get-notifications", VendorController.getVendorNotificationsHandler);
+
+
 export default router;  

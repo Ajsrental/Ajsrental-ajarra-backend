@@ -4,8 +4,8 @@ generator client {
 
 datasource db {
   provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  url               = env("DEV_DATABASE_URL")
+  shadowDatabaseUrl = env("DEV_SHADOW_DATABASE_URL")
 }
 
 model User {
@@ -25,6 +25,10 @@ model User {
   updatedAt           DateTime             @updatedAt
   passwordResetTokens PasswordResetToken[]
   vendor              Vendor?
+  notification        Notification[]       @relation("UserNotifications")
+
+  @@index([role])
+  @@index([email])
 }
 
 model Vendor {
@@ -44,6 +48,11 @@ model Vendor {
   user            User            @relation(fields: [userId], references: [id])
   vendorAccounts  VendorAccount?
   vendorServices  VendorService[]
+  bookings        Booking[]
+
+  @@index([status])
+  @@index([serviceCategory])
+  @@index([createdAt])
 }
 
 model VendorService {
@@ -52,6 +61,9 @@ model VendorService {
   category ServiceCategory
   name     ServiceName     @unique
   vendor   Vendor          @relation(fields: [vendorId], references: [id])
+
+  @@index([vendorId])
+  @@index([category])
 }
 
 model Service {
@@ -72,6 +84,10 @@ model Service {
   vendor         Vendor         @relation(fields: [vendorId], references: [id])
 
   @@unique([name, vendorId], name: "name_vendorId")
+  @@index([vendorId])
+  @@index([pricingModel])
+  @@index([availableHours])
+  @@index([createdAt])
 }
 
 model PasswordResetToken {
@@ -82,6 +98,9 @@ model PasswordResetToken {
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([expiresAt])
 }
 
 model VerificationRequest {
@@ -99,6 +118,10 @@ model VerificationRequest {
   pinId     String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model VendorAccount {
@@ -115,6 +138,9 @@ model VendorAccount {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
   vendor             Vendor             @relation(fields: [vendorId], references: [id])
+
+  @@index([verificationStatus])
+  @@index([createdAt])
 }
 
 enum UserRole {
@@ -203,4 +229,51 @@ enum VerificationStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+model Booking {
+  id            String         @id @default(uuid())
+  vendor        Vendor         @relation(fields: [vendorId], references: [id])
+  vendorId      String
+  service       String
+  clientName    String?
+  bookingDate   DateTime
+  notes         String?
+  status        BookingStatus  @default(PENDING)
+  amount        Float?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[] @relation("BookingNotifications")
+
+  @@index([vendorId])
+  @@index([status])
+  @@index([bookingDate])
+  @@index([createdAt])
+}
+
+enum BookingStatus {
+  PENDING
+  UPCOMING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  bookingId String?
+  type      NotificationType
+  message   String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  user      User             @relation("UserNotifications", fields: [userId], references: [id])
+  booking   Booking?         @relation("BookingNotifications", fields: [bookingId], references: [id])
+}
+
+enum NotificationType {
+  NEW_BOOKING
+  CONTRACT_PENDING
+  BOOKING_CONFIRMED
+  BOOKING_COMPLETED
 }
