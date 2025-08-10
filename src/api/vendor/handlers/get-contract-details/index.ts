@@ -1,0 +1,1 @@
+export * from "./get-contract-details.v1"

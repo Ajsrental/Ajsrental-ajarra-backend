@@ -421,5 +421,33 @@ router.get("/get-bookings", VendorController.getBookingsHandler);
  */
 router.get("/get-notifications", VendorController.getVendorNotificationsHandler);
 
+/**
+ * @swagger
+ * /contracts:
+ *   get:
+ *     summary: Get all contracts for the logged-in vendor
+ *     tags: [Contracts]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved contracts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 contracts:
+ *                   type: array
+ *                   items:
+ *                     $ref: '#/components/schemas/Contract'
+ *       400:
+ *         description: Vendor not found
+ *       500:
+ *         description: Internal server error
+ */
+
+router.get("/get-contract-details", VendorController.getContractHandler)
+
 
 export default router;  
