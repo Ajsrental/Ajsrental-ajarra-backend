@@ -13,4 +13,5 @@ export * from "./get-payout-information";
 export * from "./update-payout-information";
 export * from "./get-bookings";
 export * from "./get-vendor-notifications";
+export * from "./get-contract-details";
 

@@ -49,6 +49,7 @@ model Vendor {
   vendorAccounts  VendorAccount?
   vendorServices  VendorService[]
   bookings        Booking[]
+  contract        Contract[]
 
   @@index([status])
   @@index([serviceCategory])
@@ -244,6 +245,7 @@ model Booking {
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   notifications Notification[] @relation("BookingNotifications")
+  contract      Contract?
 
   @@index([vendorId])
   @@index([status])
@@ -276,4 +278,32 @@ enum NotificationType {
   CONTRACT_PENDING
   BOOKING_CONFIRMED
   BOOKING_COMPLETED
+}
+
+model Contract {
+  id                 String         @id @default(uuid())
+  bookingId          String         @unique
+  vendorId           String
+  clientName         String
+  clientEmail        String
+  service            String
+  date               DateTime
+  budget             Float
+  location           String
+  deliverables       String[] // Array of deliverables
+  termsAndConditions String
+  status             ContractStatus @default(PENDING)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+  vendor  Vendor  @relation(fields: [vendorId], references: [id])
+
+  @@index([vendorId])
+}
+
+enum ContractStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }

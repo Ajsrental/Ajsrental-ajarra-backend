@@ -454,6 +454,33 @@ export interface UpdateServiceNameResponse {
   message: string;
 }
 
+// Get Vendor Contract Information
+// Get /api/v1/vendor/get-contract-details
+export interface ContractItem {
+  id: string;
+  bookingId: string;
+  vendorId: string;
+  clientName: string;
+  clientEmail: string;
+  service: string;
+  date: string; // ISO string
+  budget: number;
+  location: string;
+  deliverables: string[];
+  termsAndConditions: string;
+  status: "PENDING" | "ACCEPTED" | "REJECTED";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GenerateContractRequest {
+  bookingId: string;
+}
+
+export interface GenerateContractResponse {
+  contract: ContractItem;
+}
+
 // Admin 
 // Get Vendors
 // GET /api/v1/admin/vendors
@@ -515,3 +542,4 @@ export interface UpdateVendorStatusResponse {
   message: string;
   vendor: Vendor;
 }
+
