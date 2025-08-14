@@ -125,3 +125,14 @@ export const updateVendorByUserId = async (
 export const getVendorByUserId = async (userId: string) => {
     return prismaClient.vendor.findUnique({ where: { userId } });
 };
+
+/**
+ * Retrieves a vendor by userId.
+ * @param rcNumber - The RC Number of the vendor to fetch.
+ * @returns The vendor record or null.
+ */
+
+export const getVendorByRcNumber = async (rcNumber: string) => {
+    return prismaClient.vendor.findUnique({ where: { rcNumber } });
+}
+

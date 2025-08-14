@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createVendorWithServices, getVendorByUserId } from "../../services/database/vendor";
+import { createVendorWithServices, getVendorByUserId, getVendorByRcNumber } from "../../services/database/vendor";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { YearsInBusiness, VendorStatus, ServiceCategory, ServiceName } from "@prisma/client";
@@ -80,12 +80,19 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
         }
 
         const existingVendor = await getVendorByUserId(user.id);
-        
+
         if (existingVendor) {
             logger.warn("Vendor already exists for user.");
             return next(new BadRequestError("Vendor already exists."));
         };
 
+        const existingRc = await getVendorByRcNumber(rcNumber);
+
+        if (existingRc) {
+            logger.warn("Vendor with this RC Number already exists.");
+            return next(new BadRequestError("Vendor with this RC Number already exists."));
+        }
+      
         const vendor = await createVendorWithServices({
             businessName,
             rcNumber,
