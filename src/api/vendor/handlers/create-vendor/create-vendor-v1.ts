@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createVendorWithServices } from "../../services/database/vendor";
+import { createVendorWithServices, getVendorByUserId } from "../../services/database/vendor";
 import { HttpStatusCode, BadRequestError, InternalServerError } from "../../../../exceptions";
 import { logger } from "../../../../utils/logger";
 import { YearsInBusiness, VendorStatus, ServiceCategory, ServiceName } from "@prisma/client";
@@ -79,6 +79,12 @@ export const createVendorHandler = async (req: Request, res: Response, next: Nex
             return next(new InternalServerError("Internal server error"));
         }
 
+        const existingVendor = await getVendorByUserId(user.id);
+        
+        if (existingVendor) {
+            logger.warn("Vendor already exists for user.");
+            return next(new BadRequestError("Vendor already exists."));
+        };
 
         const vendor = await createVendorWithServices({
             businessName,
