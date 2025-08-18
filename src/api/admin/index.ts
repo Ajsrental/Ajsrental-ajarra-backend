@@ -50,4 +50,36 @@ router.get("/vendors", Admincontroller.getAllVendorsHandler);
  */
 router.patch("/vendor/status", Admincontroller.updateVendorStatusHandler);
 
+/**
+ * @openapi
+ * /admin/analytics:
+ *   get:
+ *     tags:
+ *       - Admin
+ *     summary: Get analytics dashboard data (overview, trends, top services)
+ *     responses:
+ *       200:
+ *         description: Analytics payload returned successfully
+ */
+router.get("/analytics", Admincontroller.getAnalyticsHandler);
+
+/**
+ * @openapi
+ * /admin/dashboard-stats:
+ *   get:
+ *     tags:
+ *       - Admin
+ *     summary: Get admin dashboard stats (totals + percentage changes)
+ *     responses:
+ *       200:
+ *         description: Admin dashboard stats returned successfully
+ */
+router.get("/dashboard-stats", Admincontroller.getAdminStatsHandler);
+
+/**
+ * GET /api/v1/admin/bookings
+ * returns: all bookings for admin with vendor & contract info
+ */
+router.get("/bookings", Admincontroller.getAllBookingsHandler);
+
 export default router;
