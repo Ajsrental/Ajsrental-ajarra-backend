@@ -310,10 +310,141 @@ router.get("/analytics", Admincontroller.getAnalyticsHandler);
 router.get("/dashboard-stats", Admincontroller.getAdminStatsHandler);
 
 /**
- * GET /api/v1/admin/bookings
- * returns: all bookings for admin with vendor & contract info
-*/
-
+ * @openapi
+ * /admin/bookings:
+ *   get:
+ *     tags:
+ *       - Admin
+ *     summary: Get all bookings (supports optional filtering, paging and sorting)
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *         description: Page number (1-based). Default: 1
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 200
+ *         description: Items per page. Default: 25
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum: [PENDING, UPCOMING, CONFIRMED, COMPLETED, CANCELLED]
+ *         description: Filter bookings by status
+ *       - in: query
+ *         name: vendorId
+ *         schema:
+ *           type: string
+ *         description: Filter by vendor id
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter bookings.createdAt >= startDate (inclusive)
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Filter bookings.createdAt <= endDate (inclusive)
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Full-text search on clientName or service
+ *       - in: query
+ *         name: sortBy
+ *         schema:
+ *           type: string
+ *           enum: [createdAt, bookingDate, amount]
+ *         description: Field to sort by
+ *       - in: query
+ *         name: sortOrder
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *         description: Sort direction
+ *     responses:
+ *       200:
+ *         description: Paged list of bookings with included vendor and contract
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 meta:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     limit:
+ *                       type: integer
+ *                       example: 25
+ *                     total:
+ *                       type: integer
+ *                       example: 123
+ *                 bookings:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id: { type: string, example: "bk_01F..." }
+ *                       vendorId: { type: string, example: "ven_abc123" }
+ *                       service: { type: string, example: "Wedding Photography" }
+ *                       clientName: { type: string, nullable: true, example: "Jane Doe" }
+ *                       bookingDate: { type: string, format: date-time, example: "2025-09-01T10:00:00.000Z" }
+ *                       notes: { type: string, nullable: true, example: "Client requests outdoor shoot" }
+ *                       status: { type: string, example: "CONFIRMED" }
+ *                       amount: { type: number, nullable: true, example: 150000 }
+ *                       createdAt: { type: string, format: date-time, example: "2025-08-01T12:00:00.000Z" }
+ *                       updatedAt: { type: string, format: date-time, example: "2025-08-02T09:00:00.000Z" }
+ *                       vendor:
+ *                         type: object
+ *                         properties:
+ *                           id: { type: string, example: "ven_abc123" }
+ *                           businessName: { type: string, example: "Muna's Cocktail" }
+ *                           serviceCategory: { type: string, example: "FOOD_AND_BEVERAGE" }
+ *                           status: { type: string, example: "PENDING" }
+ *                       contract:
+ *                         oneOf:
+ *                           - type: "null"
+ *                           - type: object
+ *                             properties:
+ *                               id: { type: string, example: "ctr_abc123" }
+ *                               bookingId: { type: string, example: "bk_01F..." }
+ *                               vendorId: { type: string, example: "ven_abc123" }
+ *                               clientName: { type: string, example: "Jane Doe" }
+ *                               clientEmail: { type: string, example: "jane@example.com" }
+ *                               service: { type: string, example: "Wedding Photography" }
+ *                               date: { type: string, format: date-time, example: "2025-09-01T10:00:00.000Z" }
+ *                               budget: { type: number, example: 150000 }
+ *                               location: { type: string, example: "Lagos, Nigeria" }
+ *                               deliverables:
+ *                                 type: array
+ *                                 items: { type: string }
+ *                                 example: ["500+ edited photos", "USB drive"]
+ *                               termsAndConditions: { type: string, example: "50% deposit required" }
+ *                               status: { type: string, example: "PENDING" }
+ *                               createdAt: { type: string, format: date-time, example: "2025-08-01T12:00:00.000Z" }
+ *                               updatedAt: { type: string, format: date-time, example: "2025-08-02T09:00:00.000Z" }
+ *       400:
+ *         description: Bad request - invalid query params
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *       403:
+ *         description: Forbidden - requires admin role
+ *       500:
+ *         description: Internal server error
+ */
 router.get("/bookings", Admincontroller.getAllBookingsHandler);
 
 export default router;
