@@ -543,3 +543,112 @@ export interface UpdateVendorStatusResponse {
   vendor: Vendor;
 }
 
+// Get Admin Analytics
+// GET /api/v1/admin/analytics
+export interface GetAnalyticsRequest {} // No request body, uses jwt auth
+
+export interface AnalyticsOverview {
+  revenue: number;                    // total revenue for the current period
+  revenueChangePercent: number;       // percent change vs previous period
+  totalBookings: number;              // total bookings for the current period
+  bookingsChangePercent: number;      // percent change vs previous period
+  activeUsers: number;                // total users in the system
+  activeUsersChangePercent: number;   // percent change in new users vs previous period
+}
+
+export interface TopServiceItem {
+  service: string;
+  bookingsCount: number;
+  revenue: number;
+  revenueChangePercent: number;
+  bookingsChangePercent: number;
+}
+
+export interface GetAnalyticsResponse {
+  overview: AnalyticsOverview;
+  topServices: TopServiceItem[];
+}
+
+// Get Admin bookings
+// GET /api/v1/admin/bookings
+
+export interface GetAllBookingsRequest {} // No request body, uses jwt auth
+
+export interface AdminBookingVendor {
+  id: string;
+  businessName: string;
+  serviceCategory: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+}
+
+
+export interface AdminContractItem {
+  id: string;
+  bookingId: string;
+  vendorId: string;
+  clientName: string;
+  clientEmail: string;
+  service: string;
+  date: string; // ISO
+  budget: number;
+  location: string;
+  deliverables: string[];
+  termsAndConditions: string;
+  status: "PENDING" | "ACCEPTED" | "REJECTED";
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+export interface AdminBookingItem {
+  id: string;
+  vendorId: string;
+  service: string;
+  clientName?: string | null;
+  bookingDate: string; // ISO
+  notes?: string | null;
+  status: "PENDING" | "UPCOMING" | "CONFIRMED" | "COMPLETED" | "CANCELLED";
+  amount?: number | null;
+  createdAt: string;
+  updatedAt: string;
+  vendor?: AdminBookingVendor | null;
+  contract?: AdminContractItem | null;
+}
+
+export interface GetAllBookingsResponse {
+  bookings: AdminBookingItem[];
+}
+
+// Get Admin Dashboard Stats
+// GET /api/v1/admin/dashboard-stats
+export interface GetAdminStatsRequest { } // No request body; uses JWT for auth
+
+export interface PendingVendorItem {
+  id: string;
+  businessName: string;
+  rcNumber: string;
+  serviceCategory:
+  | "DECOR_AND_LIGHTING"
+  | "ENTERTAINMENT_AND_MEDIA"
+  | "FASHION_BEAUTY_AND_STYLING"
+  | "FOOD_AND_BEVERAGE"
+  | "BEAUTY_AND_STYLING"
+  | "LOGISTICS"
+  | "PLANNING_AND_COORDINATION";
+  phoneNumber: string;
+  businessAddress: string;
+  userId: string;
+  createdAt: string; // ISO date
+}
+
+export interface GetAdminStatsResponse {
+  totalVendors: number;
+  totalVendorsChangePercent: number;       // percent change vs previous month
+  activeUsers: number;                     // total users in system
+  activeUsersChangePercent: number;        // percent change in new users vs previous month
+  totalBookings: number;
+  bookingsChangePercent: number;           // percent change vs previous month
+  newUsersLastWeek: number;                // users created in the previous week
+  newUsersLastWeekChangePercent: number;   // percent change vs week before that
+  pendingVendors: PendingVendorItem[];     // list of vendors with status PENDING
+}
