@@ -166,12 +166,12 @@ export interface CreateVendorRequestBody {
   nin: string;
   yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
   serviceCategory:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
+  | "Beauty_And_Styling"
+  | "Decor_And_Lightening"
+  | "Entertainment_And_Media"
+  | "Food_And_Beverage"
   | "Logistics"
-  | "PlanningAndCoordination";
+  | "Planning_And_Coordination";
   phoneNumber: string;
   businessAddress: string;
   status?: "PENDING" | "APPROVED" | "REJECTED";
@@ -186,12 +186,12 @@ export interface CreateVendorResponse {
   nin: string;
   yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
   serviceCategory:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
+  | "Beauty_And_Styling"
+  | "Decor_And_Lightening"
+  | "Entertainment_And_Media"
+  | "Food_And_Beverage"
   | "Logistics"
-  | "PlanningAndCoordination";
+  | "Planning_And_Coordination";
   phoneNumber: string;
   businessAddress: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
@@ -207,13 +207,13 @@ export interface UpdateVendorRequestBody {
   rcNumber?: string;
   nin?: string;
   yearsInBusiness?: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
-  serviceCategory?:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
+  serviceCategory:
+  | "Beauty_And_Styling"
+  | "Decor_And_Lightening"
+  | "Entertainment_And_Media"
+  | "Food_And_Beverage"
   | "Logistics"
-  | "PlanningAndCoordination";
+  | "Planning_And_Coordination";
   phoneNumber?: string;
   businessAddress?: string;
   status?: "PENDING" | "APPROVED" | "REJECTED";
@@ -491,12 +491,12 @@ export interface Vendor {
   nin: string;
   yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
   serviceCategory:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
+  | "Beauty_And_Styling"
+  | "Decor_And_Lightening"
+  | "Entertainment_And_Media"
+  | "Food_And_Beverage"
   | "Logistics"
-  | "PlanningAndCoordination";
+  | "Planning_And_Coordination";
   phoneNumber: string;
   businessAddress: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
@@ -524,12 +524,12 @@ export interface Vendor {
   nin: string;
   yearsInBusiness: "LESS_THAN_ONE" | "ONE_TO_TWO" | "TWO_TO_FIVE" | "FIVE_TO_TEN" | "TEN_PLUS";
   serviceCategory:
-  | "BeautyAndStyling"
-  | "DecorAndLightening"
-  | "EntertainmentAndMedia"
-  | "FoodAndBeverage"
+  | "Beauty_And_Styling"
+  | "Decor_And_Lightening"
+  | "Entertainment_And_Media"
+  | "Food_And_Beverage"
   | "Logistics"
-  | "PlanningAndCoordination";
+  | "Planning_And_Coordination";
   phoneNumber: string;
   businessAddress: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
